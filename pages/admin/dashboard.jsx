@@ -65,7 +65,6 @@ export default function AdminDashboard() {
           </div>
 
           {/* Render Active Tab */}
-          {activeTab === 'overview' && <Overview />}
           {activeTab === 'registrations' && <RegistrationsManager />}
           {activeTab === 'contacts' && <ContactsManager />}
           {activeTab === 'teams' && <TeamsManager />}
