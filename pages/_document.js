@@ -4,7 +4,10 @@ export default function Document() {
   return (
     <Html lang="en">
       <Head>
-        {/* Favicon using RVC Logo */}
+        {/* Browser Tab Title - RVC ESPORTS */}
+        <title>RVC ESPORTS</title>
+        
+        {/* Favicon */}
         <link rel="icon" href="/images/RVCLOGO.jpg" type="image/jpeg" />
         <link rel="apple-touch-icon" href="/images/RVCLOGO.jpg" />
         
@@ -14,7 +17,7 @@ export default function Document() {
           rel="stylesheet"
         />
         
-        <meta name="description" content="RVC Esports Management" />
+        <meta name="description" content="RVC Esports" />
         <meta name="theme-color" content="#0a0a0a" />
       </Head>
       <body>
