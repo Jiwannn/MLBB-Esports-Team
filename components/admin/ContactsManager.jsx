@@ -62,7 +62,6 @@ export default function ContactsManager() {
     setSendingReply(true);
     
     try {
-      // Send reply via EmailJS
       await sendRegistrationEmail({
         gmail: replyingTo.email,
         captainName: replyingTo.name,
@@ -72,7 +71,6 @@ export default function ContactsManager() {
         message: replyText,
       });
 
-      // Update contact in Firebase
       await updateDoc(doc(db, 'contacts', replyingTo.id), { 
         status: 'replied',
         reply: replyText,
@@ -144,7 +142,6 @@ export default function ContactsManager() {
 
               <p className="text-gray-300 mb-4">{contact.message}</p>
 
-              {/* Show reply if already replied */}
               {contact.reply && (
                 <div className="bg-black p-3 rounded-lg mb-4 border border-green-500/30">
                   <p className="text-xs text-green-400 mb-1">Your reply:</p>
@@ -152,7 +149,6 @@ export default function ContactsManager() {
                 </div>
               )}
 
-              {/* Reply Box */}
               {replyingTo?.id === contact.id ? (
                 <div className="bg-black p-4 rounded-lg mb-4">
                   <p className="text-sm silver-text mb-2">Reply to {contact.name}:</p>
