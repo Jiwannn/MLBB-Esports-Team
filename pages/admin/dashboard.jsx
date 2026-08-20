@@ -73,6 +73,7 @@ export default function AdminDashboard() {
           {activeTab === 'matches' && <MatchManager />}
           {activeTab === 'gallery' && <GalleryManager />}
           {activeTab === 'settings' && <SettingsManager />}
+          {activeTab === 'overview' && <Overview setActiveTab={setActiveTab} />}
         </div>
       </div>
     </div>

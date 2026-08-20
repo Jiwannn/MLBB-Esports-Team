@@ -56,7 +56,7 @@ export default function Navbar() {
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex justify-between items-center h-16 md:h-20">
           {/* Logo - Left */}
-          <Link href="/" className="flex items-center space-x-2 flex-shrink-0">
+          <Link href="/" className="flex items-center space-x-2 flex-shrink-0 w-20">
             <img 
               src="/images/RVCLOGO.jpg" 
               alt="RVC" 
@@ -67,8 +67,8 @@ export default function Navbar() {
             />
           </Link>
 
-          {/* Centered Nav Items */}
-          <div className="hidden lg:flex items-center space-x-6 flex-1 justify-center">
+          {/* Centered Nav Items - EXACTLY CENTERED */}
+          <div className="hidden lg:flex items-center space-x-6 flex-1 justify-center px-4">
             {navItems.map((item) => {
               const Icon = item.icon;
               return (
@@ -77,7 +77,7 @@ export default function Navbar() {
                   href={item.href}
                   className="relative group"
                 >
-                  <span className={`flex items-center space-x-1 text-sm transition-colors ${
+                  <span className={`flex items-center space-x-1 text-sm whitespace-nowrap transition-colors ${
                     router.pathname === item.href
                       ? 'text-yellow-500 font-semibold'
                       : 'text-gray-300 hover:text-yellow-500'
@@ -92,25 +92,24 @@ export default function Navbar() {
           </div>
 
           {/* Admin Buttons - Right */}
-          <div className="hidden lg:flex items-center space-x-3 flex-shrink-0">
+          <div className="hidden lg:flex items-center space-x-3 flex-shrink-0 w-20 justify-end">
             {isLoggedIn ? (
               <>
                 <Link href="/admin/dashboard">
                   <motion.button
                     whileHover={{ scale: 1.05 }}
-                    className="flex items-center space-x-2 px-4 py-2 bg-gradient-to-r from-yellow-500 to-yellow-300 text-black font-semibold rounded-lg text-sm"
+                    className="flex items-center space-x-2 px-3 py-2 bg-gradient-to-r from-yellow-500 to-yellow-300 text-black font-semibold rounded-lg text-sm"
                   >
                     <LayoutDashboard className="w-4 h-4" />
-                    <span>Dashboard</span>
+                    <span className="hidden xl:block">Dashboard</span>
                   </motion.button>
                 </Link>
                 <motion.button
                   whileHover={{ scale: 1.05 }}
                   onClick={handleLogout}
-                  className="flex items-center space-x-2 px-4 py-2 bg-red-500/20 text-red-400 font-semibold rounded-lg text-sm"
+                  className="flex items-center space-x-2 px-3 py-2 bg-red-500/20 text-red-400 font-semibold rounded-lg text-sm"
                 >
                   <LogOut className="w-4 h-4" />
-                  <span>Logout</span>
                 </motion.button>
               </>
             ) : (
