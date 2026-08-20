@@ -52,8 +52,8 @@ export default function Overview({ setActiveTab }) {
   ];
 
   const quickActions = [
-    { label: 'View Teams', icon: Users, tab: 'teams' },
-    { label: 'View Players', icon: Gamepad2, tab: 'players' },
+    { label: 'Teams', icon: Users, tab: 'teams' },
+    { label: 'Players', icon: Gamepad2, tab: 'players' },
     { label: 'Registrations', icon: ClipboardList, tab: 'registrations' },
     { label: 'Messages', icon: MessageSquare, tab: 'contacts' },
     { label: 'Matches', icon: Swords, tab: 'matches' },
@@ -63,51 +63,49 @@ export default function Overview({ setActiveTab }) {
 
   return (
     <div>
-      {/* Stats Grid */}
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 mb-8">
-        {statCards.map((stat, index) => {
-          const Icon = stat.icon;
-          return (
-            <motion.div
-              key={stat.label}
-              initial={{ opacity: 0, y: 20 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ delay: index * 0.1 }}
-              whileHover={{ scale: 1.05 }}
-              className={`bg-gray-900 p-6 rounded-xl border-2 ${
-                stat.color === 'yellow' ? 'border-yellow-500/50' : 'border-silver-500/30'
-              }`}
-            >
-              <div className="flex justify-between items-start mb-4">
-                <Icon className={`w-10 h-10 ${
+      {/* Stats Display - NOT clickable, just information */}
+      <div className="mb-8">
+        <h3 className="text-lg font-semibold silver-text mb-4">Statistics</h3>
+        <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-4">
+          {statCards.map((stat, index) => {
+            const Icon = stat.icon;
+            return (
+              <motion.div
+                key={stat.label}
+                initial={{ opacity: 0, y: 20 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ delay: index * 0.05 }}
+                className="bg-gray-900 p-4 rounded-xl border border-gray-700 text-center"
+              >
+                <Icon className={`w-8 h-8 mx-auto mb-2 ${
                   stat.color === 'yellow' ? 'text-yellow-500' : 'text-gray-400'
                 }`} />
-              </div>
-              <p className={`text-4xl font-bold mb-2 ${
-                stat.color === 'yellow' ? 'gold-text' : 'silver-text'
-              }`}>
-                {loading ? '...' : stat.value}
-              </p>
-              <p className="text-gray-400">{stat.label}</p>
-            </motion.div>
-          );
-        })}
+                <p className={`text-2xl font-bold mb-1 ${
+                  stat.color === 'yellow' ? 'gold-text' : 'silver-text'
+                }`}>
+                  {loading ? '...' : stat.value}
+                </p>
+                <p className="text-gray-400 text-xs">{stat.label}</p>
+              </motion.div>
+            );
+          })}
+        </div>
       </div>
 
-      {/* Quick Actions - WORKING BUTTONS */}
-      <div className="bg-gray-900 p-6 rounded-xl border border-yellow-500/30">
+      {/* Quick Actions - THE ONLY BUTTONS */}
+      <div className="bg-gray-900 p-6 rounded-xl border-2 border-yellow-500/30">
         <h3 className="text-xl font-bold gold-text mb-4">Quick Actions</h3>
-        <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
+        <div className="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-7 gap-3">
           {quickActions.map((action) => {
             const Icon = action.icon;
             return (
               <button
                 key={action.tab}
                 onClick={() => setActiveTab(action.tab)}
-                className="p-4 bg-yellow-500/10 rounded-lg hover:bg-yellow-500/20 transition-all flex flex-col items-center space-y-2 cursor-pointer"
+                className="p-4 bg-yellow-500/10 rounded-lg hover:bg-yellow-500/20 transition-all flex flex-col items-center space-y-2 cursor-pointer border border-yellow-500/30 hover:border-yellow-500"
               >
-                <Icon className="w-8 h-8 text-yellow-500" />
-                <span className="text-yellow-500 text-sm font-semibold">{action.label}</span>
+                <Icon className="w-6 h-6 text-yellow-500" />
+                <span className="text-yellow-500 text-xs font-semibold">{action.label}</span>
               </button>
             );
           })}
