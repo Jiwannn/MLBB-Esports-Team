@@ -2,13 +2,12 @@ import { useState, useEffect } from 'react';
 import { motion } from 'framer-motion';
 import { db } from '../../lib/firebase';
 import { collection, getDocs, deleteDoc, doc, updateDoc } from 'firebase/firestore';
-import { Trash2, Mail, MessageSquare, CheckCircle, XCircle } from 'lucide-react';
+import { Trash2, Mail, MessageSquare, CheckCircle } from 'lucide-react';
 import toast from 'react-hot-toast';
 
 export default function ContactsManager() {
   const [contacts, setContacts] = useState([]);
   const [loading, setLoading] = useState(true);
-  const [selectedContact, setSelectedContact] = useState(null);
 
   useEffect(() => {
     fetchContacts();
@@ -101,7 +100,7 @@ export default function ContactsManager() {
 
               <div className="flex justify-between items-center">
                 <span className="text-xs text-gray-500">
-                  {new Date(contact.createdAt).toLocaleString()}
+                  {contact.createdAt ? new Date(contact.createdAt).toLocaleString() : 'Just now'}
                 </span>
                 <div className="flex space-x-2">
                   {contact.status === 'unread' && (
