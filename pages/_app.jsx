@@ -6,12 +6,10 @@ import Footer from '../components/ui/Footer';
 
 function MyApp({ Component, pageProps }) {
   const router = useRouter();
-  
-  // Check if current route is admin page
   const isAdminPage = router.pathname.startsWith('/admin');
 
   return (
-    <>
+    <div style={{ overflowX: 'hidden', width: '100%' }}>
       {!isAdminPage && <Navbar />}
       <Component {...pageProps} />
       {!isAdminPage && <Footer />}
@@ -25,7 +23,7 @@ function MyApp({ Component, pageProps }) {
           },
         }}
       />
-    </>
+    </div>
   );
 }
 

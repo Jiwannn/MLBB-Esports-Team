@@ -19,22 +19,28 @@
 
 html {
   scroll-behavior: smooth;
+  overflow-x: hidden;
 }
 
 body {
   background: #0a0a0a;
   color: #E8E8E8;
   overflow-x: hidden;
+  width: 100%;
   font-family: 'Poppins', 'Montserrat', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
 }
 
-/* Headings - Beautiful Playfair Display */
+/* Fix mobile overflow */
+#__next {
+  overflow-x: hidden;
+  width: 100%;
+}
+
 h1, h2, h3 {
   font-family: 'Playfair Display', 'Montserrat', serif;
   letter-spacing: 0.5px;
 }
 
-/* Body text - Clean Poppins */
 p, span, a, button, input, select, textarea {
   font-family: 'Poppins', 'Montserrat', sans-serif;
 }
@@ -85,19 +91,10 @@ p, span, a, button, input, select, textarea {
   border-radius: 10px;
 }
 
-::-webkit-scrollbar-thumb:hover {
-  background: linear-gradient(180deg, #FFF4CC, #E8E8E8, #FFF4CC);
-}
-
-/* StrokeText Styles */
 .stroke-text {
   display: block;
   width: 100%;
   line-height: 0;
-}
-
-.stroke-text--hover {
-  cursor: pointer;
 }
 
 .stroke-text__svg {
@@ -106,12 +103,6 @@ p, span, a, button, input, select, textarea {
   height: var(--stroke-text-height, 160px);
 }
 
-.stroke-text__stroke,
-.stroke-text__fill {
-  user-select: none;
-}
-
-/* Team Card Auto Glare Effect */
 .team-card {
   position: relative;
   overflow: hidden;
@@ -173,7 +164,6 @@ p, span, a, button, input, select, textarea {
   box-shadow: 0 0 20px rgba(255,255,255,0.3), 0 0 40px rgba(255,255,255,0.1);
 }
 
-/* Admin Dashboard Font Styling */
 .admin-title {
   font-family: 'Playfair Display', serif;
   font-weight: 900;
@@ -191,7 +181,6 @@ p, span, a, button, input, select, textarea {
   letter-spacing: 0.5px;
 }
 
-/* Gradient Border Utility */
 .gradient-border {
   border: 2px solid transparent;
   background-image: linear-gradient(#1a1a1a, #1a1a1a), 
@@ -200,7 +189,6 @@ p, span, a, button, input, select, textarea {
   background-clip: padding-box, border-box;
 }
 
-/* Glowing Effects */
 .glow-gold {
   box-shadow: 0 0 10px #FFD700, 0 0 20px #FFD700, 0 0 40px #FFD700;
 }
@@ -209,8 +197,32 @@ p, span, a, button, input, select, textarea {
   box-shadow: 0 0 10px #C0C0C0, 0 0 20px #C0C0C0, 0 0 40px #C0C0C0;
 }
 
-/* Responsive Typography */
+/* Mobile Full Width Fix */
 @media (max-width: 768px) {
+  body {
+    width: 100% !important;
+    overflow-x: hidden !important;
+  }
+
+  #__next {
+    width: 100% !important;
+    overflow-x: hidden !important;
+  }
+
+  main {
+    width: 100% !important;
+    padding: 0 !important;
+    margin: 0 !important;
+  }
+
+  section {
+    width: 100% !important;
+    padding-left: 0 !important;
+    padding-right: 0 !important;
+    margin-left: 0 !important;
+    margin-right: 0 !important;
+  }
+
   h1 { font-size: 2.5rem; }
   h2 { font-size: 2rem; }
 }

@@ -65,7 +65,6 @@ export default function Navbar() {
                 e.target.style.display = 'none';
               }}
             />
-            <span className="text-xl md:text-2xl font-bold gold-text">RVC</span>
           </Link>
 
           {/* Centered Nav Items */}
