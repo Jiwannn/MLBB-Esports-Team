@@ -6,20 +6,21 @@ import {
   LayoutDashboard, 
   Users, 
   Gamepad2, 
-  Trophy, 
   Swords, 
   Image, 
   Settings,
   LogOut,
   Home,
   ChevronLeft,
-  ClipboardList
+  ClipboardList,
+  MessageSquare
 } from 'lucide-react';
 
 export default function Sidebar({ activeTab, setActiveTab, isOpen, setIsOpen }) {
   const menuItems = [
     { id: 'overview', label: 'Overview', icon: LayoutDashboard },
     { id: 'registrations', label: 'Registrations', icon: ClipboardList },
+    { id: 'contacts', label: 'Messages', icon: MessageSquare },
     { id: 'teams', label: 'Teams', icon: Users },
     { id: 'players', label: 'Players', icon: Gamepad2 },
     { id: 'matches', label: 'Matches', icon: Swords },
