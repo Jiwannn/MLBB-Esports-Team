@@ -110,12 +110,13 @@ export default function AboutSection() {
             <div key={index} className="flex items-center space-x-8 mr-8">
               <span className="text-3xl font-black gold-text">RVC</span>
               <span className="text-yellow-500 text-xl">★</span>
-              <span className="text-xl font-bold silver-text">ESPORTS MANAGEMENT</span>
+              <span className="text-xl font-bold silver-text">ON TOP!</span>
               <span className="text-yellow-500 text-xl">★</span>
-              <span className="text-xl font-bold gold-text">MOBILE LEGENDS</span>
+              <span className="text-xl font-bold gold-text">RVC LANG MALAKAS</span>
               <span className="text-yellow-500 text-xl">★</span>
-              <span className="text-xl font-bold silver-text">BANG BANG</span>
+              <span className="text-xl font-bold silver-text">CHAMPIONS!</span>
               <span className="text-yellow-500 text-xl">★</span>
+
             </div>
           ))}
         </motion.div>

@@ -30,12 +30,8 @@ export default function RegistrationsManager() {
   const handleApprove = async (reg) => {
     setSendingEmail(true);
     try {
-      // Update status in Firebase
       await updateDoc(doc(db, 'registrations', reg.id), { status: 'approved' });
       
-      console.log('Sending approval email to:', reg.gmail);
-      
-      // Send email
       await sendRegistrationEmail({
         gmail: reg.gmail,
         captainName: reg.captainName,
@@ -44,7 +40,6 @@ export default function RegistrationsManager() {
         registrationFee: reg.registrationFee || 0,
       });
       
-      console.log('Email sent successfully!');
       toast.success(`${reg.teamName} approved! Email sent to ${reg.gmail}`);
       fetchRegistrations();
     } catch (error) {
@@ -144,6 +139,7 @@ export default function RegistrationsManager() {
                     <Mail className="w-3 h-3" />
                     <span>{reg.gmail}</span>
                   </p>
+                  {reg.region && <p className="text-gray-400 text-sm">Region: {reg.region}</p>}
                   {reg.registrationFee > 0 && (
                     <p className="text-gray-400 text-sm flex items-center space-x-1">
                       <DollarSign className="w-3 h-3" />
@@ -156,17 +152,38 @@ export default function RegistrationsManager() {
                 </span>
               </div>
 
+              {/* Players - 5 required + 2 optional */}
               <div className="mb-4">
-                <p className="text-sm silver-text mb-2">Players:</p>
-                <div className="grid grid-cols-2 md:grid-cols-5 gap-2">
+                <p className="text-sm silver-text mb-2">Players (7 total - 2 optional):</p>
+                <div className="grid grid-cols-2 md:grid-cols-4 gap-2">
                   {reg.players?.map((player, index) => (
-                    <div key={index} className="bg-black p-2 rounded text-sm text-gray-300">
-                      {player || `Player ${index + 1}`}
+                    <div 
+                      key={index} 
+                      className={`p-2 rounded text-sm ${
+                        index < 5 
+                          ? 'bg-black text-gray-300' 
+                          : player 
+                          ? 'bg-black text-gray-300 border border-yellow-500/30' 
+                          : 'bg-gray-800/50 text-gray-600 italic'
+                      }`}
+                    >
+                      {player || (index < 5 ? `Player ${index + 1}` : 'Optional')}
                     </div>
                   ))}
                 </div>
               </div>
 
+              {/* Coach */}
+              {reg.coach && (
+                <div className="mb-4">
+                  <p className="text-sm silver-text mb-1">Coach:</p>
+                  <div className="bg-black p-2 rounded text-sm text-gray-300 inline-block">
+                    {reg.coach}
+                  </div>
+                </div>
+              )}
+
+              {/* Actions */}
               <div className="flex flex-wrap space-x-2">
                 {reg.status === 'pending_payment' && (
                   <button 

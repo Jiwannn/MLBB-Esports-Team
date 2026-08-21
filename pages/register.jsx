@@ -3,7 +3,8 @@ import { useState, useEffect } from 'react';
 import { db } from '../lib/firebase';
 import { collection, addDoc } from 'firebase/firestore';
 import { doc, getDoc } from 'firebase/firestore';
-import { ClipboardList, Gamepad2, Mail } from 'lucide-react';
+import { Gamepad2, Mail, Send, Trophy } from 'lucide-react';
+import { sendRegistrationEmail } from '../lib/emailjs';
 import toast from 'react-hot-toast';
 
 export default function RegisterPage() {
@@ -12,11 +13,12 @@ export default function RegisterPage() {
     captainName: '',
     gmail: '',
     region: '',
-    players: ['', '', '', '', ''],
+    players: ['', '', '', '', '', '', ''], // 7 players
     coach: '',
   });
   const [registrationFee, setRegistrationFee] = useState(0);
   const [qrCodeUrl, setQrCodeUrl] = useState('');
+  const [sendingEmail, setSendingEmail] = useState(false);
 
   useEffect(() => {
     fetchPaymentSettings();
@@ -54,27 +56,39 @@ export default function RegisterPage() {
       return;
     }
 
+    setSendingEmail(true);
+    
     try {
+      const status = registrationFee > 0 ? 'pending_payment' : 'pending';
+      
       await addDoc(collection(db, 'registrations'), {
         ...form,
         registrationFee,
-        status: 'pending_payment',
+        status,
         registeredAt: new Date().toISOString(),
       });
-      
-      toast.success('Registration submitted! Check your Gmail for updates.');
+
+      await sendRegistrationEmail({
+        ...form,
+        status,
+        registrationFee,
+      });
+
+      toast.success('Registration submitted! Check your Gmail for confirmation.');
       
       setForm({
         teamName: '',
         captainName: '',
         gmail: '',
         region: '',
-        players: ['', '', '', '', ''],
+        players: ['', '', '', '', '', '', ''],
         coach: '',
       });
     } catch (error) {
       console.error('Registration error:', error);
       toast.error('Failed to submit registration');
+    } finally {
+      setSendingEmail(false);
     }
   };
 
@@ -86,8 +100,8 @@ export default function RegisterPage() {
           animate={{ opacity: 1, y: 0 }}
           className="text-center mb-12"
         >
-          <div className="text-6xl mb-4">🏆</div>
-          <h1 className="text-5xl md:text-6xl font-black mb-4">
+          <Trophy className="w-16 h-16 text-yellow-500 mx-auto mb-4" />
+          <h1 className="text-4xl md:text-6xl font-black mb-4">
             <span className="gold-text">Team Registration</span>
           </h1>
           <p className="text-xl text-gray-400">Register your team for the tournament</p>
@@ -98,10 +112,10 @@ export default function RegisterPage() {
           animate={{ opacity: 1, y: 0 }}
           transition={{ delay: 0.3 }}
           onSubmit={handleSubmit}
-          className="bg-gray-900 p-8 rounded-xl border-2 border-yellow-500/50 space-y-6"
+          className="bg-gray-900 p-6 md:p-8 rounded-xl border-2 border-yellow-500/50 space-y-6"
         >
           {/* Team Info */}
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-4 md:gap-6">
             <div>
               <label className="block text-sm silver-text mb-2">Team Name *</label>
               <input type="text" value={form.teamName} onChange={(e) => setForm({ ...form, teamName: e.target.value })} className="w-full px-4 py-3 bg-black border border-gray-700 rounded-lg text-white" placeholder="e.g., Team Alpha" required />
@@ -112,14 +126,14 @@ export default function RegisterPage() {
             </div>
           </div>
 
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+          {/* Gmail + Region */}
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-4 md:gap-6">
             <div>
               <label className="block text-sm silver-text mb-2 flex items-center space-x-2">
                 <Mail className="w-4 h-4" />
                 <span>Gmail Account *</span>
               </label>
               <input type="email" value={form.gmail} onChange={(e) => setForm({ ...form, gmail: e.target.value })} className="w-full px-4 py-3 bg-black border border-gray-700 rounded-lg text-white" placeholder="yourname@gmail.com" required />
-              <p className="text-xs text-gray-500 mt-1">We will email you about your registration status</p>
             </div>
             <div>
               <label className="block text-sm silver-text mb-2">Region</label>
@@ -127,15 +141,23 @@ export default function RegisterPage() {
             </div>
           </div>
 
-          {/* Players */}
+          {/* 7 Players */}
           <div>
             <label className="block text-sm silver-text mb-4 flex items-center space-x-2">
               <Gamepad2 className="w-4 h-4" />
-              <span>Players (5 members)</span>
+              <span>Players (7 members)</span>
             </label>
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-3 md:gap-4">
               {form.players.map((player, index) => (
-                <input key={index} type="text" value={player} onChange={(e) => handlePlayerChange(index, e.target.value)} className="w-full px-4 py-3 bg-black border border-gray-700 rounded-lg text-white" placeholder={`Player ${index + 1} name`} />
+                <div key={index}>
+                  <input
+                    type="text"
+                    value={player}
+                    onChange={(e) => handlePlayerChange(index, e.target.value)}
+                    className="w-full px-4 py-3 bg-black border border-gray-700 rounded-lg text-white"
+                    placeholder={`Player ${index + 1} name`}
+                  />
+                </div>
               ))}
             </div>
           </div>
@@ -146,22 +168,29 @@ export default function RegisterPage() {
             <input type="text" value={form.coach} onChange={(e) => setForm({ ...form, coach: e.target.value })} className="w-full px-4 py-3 bg-black border border-gray-700 rounded-lg text-white" placeholder="Coach name" />
           </div>
 
-          {/* Registration Fee + QR Code */}
+          {/* Registration Fee + QR */}
           {registrationFee > 0 && qrCodeUrl && (
             <div className="bg-black p-6 rounded-xl border border-yellow-500/30">
               <h3 className="text-xl font-bold gold-text mb-4 text-center">Registration Fee</h3>
               <p className="text-3xl font-black gold-text text-center mb-4">₱{registrationFee}</p>
               <p className="text-gray-400 text-center mb-4">Scan the QR code to pay:</p>
               <div className="flex justify-center">
-                <img src={qrCodeUrl} alt="Payment QR Code" className="w-48 h-48 object-contain rounded-lg bg-white p-2" />
+                <img src={qrCodeUrl} alt="Payment QR Code" className="w-40 h-40 object-contain rounded-lg bg-white p-2" />
               </div>
               <p className="text-gray-500 text-center mt-4 text-sm">After payment, we will verify and send confirmation to your Gmail</p>
             </div>
           )}
 
           {/* Submit */}
-          <motion.button whileHover={{ scale: 1.02 }} whileTap={{ scale: 0.98 }} type="submit" className="w-full py-4 bg-gradient-to-r from-yellow-500 to-yellow-300 text-black text-xl font-bold rounded-lg shadow-lg">
-            SUBMIT REGISTRATION
+          <motion.button 
+            whileHover={{ scale: 1.02 }} 
+            whileTap={{ scale: 0.98 }} 
+            type="submit" 
+            disabled={sendingEmail}
+            className="w-full py-4 bg-gradient-to-r from-yellow-500 to-yellow-300 text-black text-xl font-bold rounded-lg shadow-lg disabled:opacity-50 flex items-center justify-center space-x-2"
+          >
+            <Send className="w-5 h-5" />
+            <span>{sendingEmail ? 'SUBMITTING...' : 'SUBMIT REGISTRATION'}</span>
           </motion.button>
         </motion.form>
       </div>
