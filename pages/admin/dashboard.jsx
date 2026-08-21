@@ -13,6 +13,7 @@ import SponsorsManager from '../../components/admin/SponsorsManager';
 import AnnouncementsManager from '../../components/admin/AnnouncementsManager';
 import FAQManager from '../../components/admin/FAQManager';
 
+
 export default function AdminDashboard() {
   const router = useRouter();
   const [adminEmail, setAdminEmail] = useState('');
@@ -66,6 +67,7 @@ export default function AdminDashboard() {
           {activeTab === 'teams' && <TeamsManager />}
           {activeTab === 'players' && <PlayersManager />}
           {activeTab === 'matches' && <MatchManager />}
+          {activeTab === 'achievements' && <AchievementsManager />}
           {activeTab === 'announcements' && <AnnouncementsManager />}
           {activeTab === 'sponsors' && <SponsorsManager />}
           {activeTab === 'gallery' && <GalleryManager />}
