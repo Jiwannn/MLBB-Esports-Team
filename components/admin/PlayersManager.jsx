@@ -2,11 +2,12 @@ import { useState, useEffect, useRef } from 'react';
 import { motion } from 'framer-motion';
 import { db } from '../../lib/firebase';
 import { collection, addDoc, getDocs, deleteDoc, doc, updateDoc } from 'firebase/firestore';
-import { Plus, Edit, Trash2, Upload, X, Gamepad2 } from 'lucide-react';
+import { Plus, Edit, Trash2, Upload, X, Gamepad2, Users } from 'lucide-react';
 import toast from 'react-hot-toast';
 
 export default function PlayersManager() {
   const [players, setPlayers] = useState([]);
+  const [teams, setTeams] = useState([]);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [editingPlayer, setEditingPlayer] = useState(null);
   const [uploading, setUploading] = useState(false);
@@ -20,6 +21,7 @@ export default function PlayersManager() {
 
   useEffect(() => {
     fetchPlayers();
+    fetchTeams();
   }, []);
 
   const fetchPlayers = async () => {
@@ -29,6 +31,15 @@ export default function PlayersManager() {
     } catch (error) {
       console.error('Error fetching players:', error);
       toast.error('Failed to load players');
+    }
+  };
+
+  const fetchTeams = async () => {
+    try {
+      const snapshot = await getDocs(collection(db, 'teams'));
+      setTeams(snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() })));
+    } catch (error) {
+      console.error('Error fetching teams:', error);
     }
   };
 
@@ -71,6 +82,11 @@ export default function PlayersManager() {
     
     if (!form.name || !form.role) {
       toast.error('Please fill in Name and Role');
+      return;
+    }
+
+    if (!form.team) {
+      toast.error('Please select a team');
       return;
     }
 
@@ -134,7 +150,6 @@ export default function PlayersManager() {
               whileHover={{ scale: 1.03 }}
               className="bg-gray-900 rounded-xl border border-yellow-500/30 overflow-hidden"
             >
-              {/* Player Image */}
               <div className="relative w-full aspect-square">
                 {player.image ? (
                   <img src={player.image} alt={player.name} className="w-full h-full object-cover" />
@@ -145,11 +160,15 @@ export default function PlayersManager() {
                 )}
               </div>
               
-              {/* Player Info */}
               <div className="p-3">
                 <h3 className="text-sm font-bold gold-text truncate">{player.name}</h3>
                 <p className="text-gray-400 text-xs">{player.role}</p>
-                {player.team && <p className="text-gray-500 text-xs">{player.team}</p>}
+                {player.team && (
+                  <p className="text-gray-500 text-xs flex items-center space-x-1 mt-1">
+                    <Users className="w-3 h-3" />
+                    <span>{player.team}</span>
+                  </p>
+                )}
                 
                 <div className="flex space-x-1 mt-2">
                   <button
@@ -261,15 +280,30 @@ export default function PlayersManager() {
                 </select>
               </div>
 
+              {/* TEAM DROPDOWN - From Firebase Teams */}
               <div>
-                <label className="block text-sm silver-text mb-2">Team (Optional)</label>
-                <input
-                  type="text"
+                <label className="block text-sm silver-text mb-2 flex items-center space-x-2">
+                  <Users className="w-4 h-4" />
+                  <span>Team *</span>
+                </label>
+                <select
                   value={form.team}
                   onChange={(e) => setForm({ ...form, team: e.target.value })}
                   className="w-full px-4 py-2 bg-black border border-gray-700 rounded-lg text-white"
-                  placeholder="e.g., Team Alpha"
-                />
+                  required
+                >
+                  <option value="">Select a team...</option>
+                  {teams.map((team) => (
+                    <option key={team.id} value={team.name}>
+                      {team.name}
+                    </option>
+                  ))}
+                </select>
+                {teams.length === 0 && (
+                  <p className="text-xs text-gray-500 mt-1">
+                    No teams yet. Add teams first in the Teams tab.
+                  </p>
+                )}
               </div>
 
               <div className="flex space-x-4 pt-2">
