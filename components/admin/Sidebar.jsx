@@ -16,7 +16,8 @@ import {
   MessageSquare,
   Handshake,
   Megaphone,
-  HelpCircle
+  HelpCircle,
+  Trophy
 } from 'lucide-react';
 
 export default function Sidebar({ activeTab, setActiveTab, isOpen, setIsOpen }) {
@@ -26,6 +27,7 @@ export default function Sidebar({ activeTab, setActiveTab, isOpen, setIsOpen }) 
     { id: 'contacts', label: 'Messages', icon: MessageSquare },
     { id: 'teams', label: 'Teams', icon: Users },
     { id: 'players', label: 'Players', icon: Gamepad2 },
+    { id: 'achievements', label: 'Achievements', icon: Trophy },
     { id: 'matches', label: 'Matches', icon: Swords },
     { id: 'announcements', label: 'Announcements', icon: Megaphone },
     { id: 'sponsors', label: 'Sponsors', icon: Handshake },
