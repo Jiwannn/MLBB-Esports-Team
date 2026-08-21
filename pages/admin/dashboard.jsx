@@ -9,6 +9,9 @@ import MatchManager from '../../components/admin/MatchManager';
 import SettingsManager from '../../components/admin/SettingsManager';
 import RegistrationsManager from '../../components/admin/RegistrationsManager';
 import ContactsManager from '../../components/admin/ContactsManager';
+import SponsorsManager from '../../components/admin/SponsorsManager';
+import AnnouncementsManager from '../../components/admin/AnnouncementsManager';
+import FAQManager from '../../components/admin/FAQManager';
 
 export default function AdminDashboard() {
   const router = useRouter();
@@ -37,7 +40,7 @@ export default function AdminDashboard() {
       />
 
       <div className={`flex-1 transition-all duration-300 ${isSidebarOpen ? 'ml-64' : 'ml-0'}`}>
-        {/* Top Bar - Just email and hamburger */}
+        {/* Top Bar */}
         <div className="bg-gray-900/50 backdrop-blur-lg border-b border-yellow-500/30 px-8 py-4 flex justify-between items-center sticky top-0 z-40">
           <button
             onClick={() => setIsSidebarOpen(!isSidebarOpen)}
@@ -55,7 +58,7 @@ export default function AdminDashboard() {
           </div>
         </div>
 
-        {/* Content Area - NO redundant header */}
+        {/* Content Area */}
         <div className="p-8">
           {activeTab === 'overview' && <Overview setActiveTab={setActiveTab} />}
           {activeTab === 'registrations' && <RegistrationsManager />}
@@ -63,7 +66,10 @@ export default function AdminDashboard() {
           {activeTab === 'teams' && <TeamsManager />}
           {activeTab === 'players' && <PlayersManager />}
           {activeTab === 'matches' && <MatchManager />}
+          {activeTab === 'announcements' && <AnnouncementsManager />}
+          {activeTab === 'sponsors' && <SponsorsManager />}
           {activeTab === 'gallery' && <GalleryManager />}
+          {activeTab === 'faqs' && <FAQManager />}
           {activeTab === 'settings' && <SettingsManager />}
         </div>
       </div>

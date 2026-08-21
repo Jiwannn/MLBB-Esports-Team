@@ -13,7 +13,10 @@ import {
   Home,
   ChevronLeft,
   ClipboardList,
-  MessageSquare
+  MessageSquare,
+  Handshake,
+  Megaphone,
+  HelpCircle
 } from 'lucide-react';
 
 export default function Sidebar({ activeTab, setActiveTab, isOpen, setIsOpen }) {
@@ -24,7 +27,10 @@ export default function Sidebar({ activeTab, setActiveTab, isOpen, setIsOpen }) 
     { id: 'teams', label: 'Teams', icon: Users },
     { id: 'players', label: 'Players', icon: Gamepad2 },
     { id: 'matches', label: 'Matches', icon: Swords },
+    { id: 'announcements', label: 'Announcements', icon: Megaphone },
+    { id: 'sponsors', label: 'Sponsors', icon: Handshake },
     { id: 'gallery', label: 'Gallery', icon: Image },
+    { id: 'faqs', label: 'FAQ', icon: HelpCircle },
     { id: 'settings', label: 'Settings', icon: Settings },
   ];
 
@@ -51,39 +57,39 @@ export default function Sidebar({ activeTab, setActiveTab, isOpen, setIsOpen }) 
           </button>
         </div>
         
-        <nav className="flex-1 space-y-2 overflow-y-auto">
+        <nav className="flex-1 space-y-1.5 overflow-y-auto">
           {menuItems.map((item) => {
             const Icon = item.icon;
             return (
               <button
                 key={item.id}
                 onClick={() => setActiveTab(item.id)}
-                className={`w-full flex items-center space-x-3 px-4 py-3 rounded-lg transition-all admin-text ${
+                className={`w-full flex items-center space-x-3 px-4 py-2.5 rounded-lg transition-all admin-text ${
                   activeTab === item.id
                     ? 'bg-yellow-500/20 text-yellow-500 border border-yellow-500/30 font-semibold'
                     : 'text-gray-300 hover:bg-yellow-500/10 hover:text-yellow-500'
                 }`}
               >
-                <Icon className="w-5 h-5" />
-                <span>{item.label}</span>
+                <Icon className="w-5 h-5 flex-shrink-0" />
+                <span className="text-sm">{item.label}</span>
               </button>
             );
           })}
         </nav>
 
-        <Link href="/" className="mb-2">
-          <button className="w-full flex items-center space-x-3 px-4 py-3 rounded-lg text-yellow-500 hover:bg-yellow-500/20 transition-all border border-yellow-500/30 admin-text">
+        <Link href="/" className="mb-2 mt-4">
+          <button className="w-full flex items-center space-x-3 px-4 py-2.5 rounded-lg text-yellow-500 hover:bg-yellow-500/20 transition-all border border-yellow-500/30 admin-text">
             <Home className="w-5 h-5" />
-            <span>Back to Website</span>
+            <span className="text-sm">Back to Website</span>
           </button>
         </Link>
 
         <button
           onClick={handleLogout}
-          className="flex items-center space-x-3 px-4 py-3 rounded-lg text-red-400 hover:bg-red-500/20 transition-all admin-text"
+          className="flex items-center space-x-3 px-4 py-2.5 rounded-lg text-red-400 hover:bg-red-500/20 transition-all admin-text"
         >
           <LogOut className="w-5 h-5" />
-          <span>Logout</span>
+          <span className="text-sm">Logout</span>
         </button>
       </div>
     </motion.aside>
