@@ -8,7 +8,6 @@ export default function HeroSection() {
   const [strokeWidth, setStrokeWidth] = useState(3);
 
   useEffect(() => {
-    // Responsive font size
     const handleResize = () => {
       if (window.innerWidth < 480) {
         setFontSize(80);
@@ -28,10 +27,9 @@ export default function HeroSection() {
     handleResize();
     window.addEventListener('resize', handleResize);
 
-    // Wait for LoadingScreen to finish (2.5s)
     const timer = setTimeout(() => {
       setShowContent(true);
-    }, 2500);
+    }, 2500); // Matches LoadingScreen
 
     return () => {
       window.removeEventListener('resize', handleResize);
@@ -41,7 +39,6 @@ export default function HeroSection() {
 
   return (
     <section id="home" className="relative min-h-screen flex items-center justify-center overflow-hidden">
-      {/* Background */}
       <div className="absolute inset-0">
         <img
           src="/images/hero-banner.jpg"
@@ -55,10 +52,8 @@ export default function HeroSection() {
         <div className="absolute inset-0 bg-gradient-to-r from-black via-black/70 to-black/50" />
       </div>
 
-      {/* Content - Shows AFTER loading screen */}
       {showContent && (
         <div className="relative z-10 text-center px-4">
-          {/* StrokeText RVC */}
           <StrokeText
             text="RVC"
             strokeColor="#FFD700"
@@ -75,7 +70,6 @@ export default function HeroSection() {
             letterSpacing={8}
           />
           
-          {/* Subtitle */}
           <motion.p
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
@@ -85,7 +79,6 @@ export default function HeroSection() {
             Esports Management
           </motion.p>
 
-          {/* Description */}
           <motion.p
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
@@ -95,7 +88,6 @@ export default function HeroSection() {
             Professional Mobile Legends: Bang Bang Team Management
           </motion.p>
 
-          {/* Join Button */}
           <motion.a
             href="https://www.facebook.com/profile.php?id=61591654514167"
             target="_blank"

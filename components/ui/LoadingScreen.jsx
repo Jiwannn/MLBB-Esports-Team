@@ -7,7 +7,7 @@ export default function LoadingScreen() {
   useEffect(() => {
     const timer = setTimeout(() => {
       setIsLoading(false);
-    }, 1000); // 1 second
+    }, 2500); // 2.5 seconds
 
     return () => clearTimeout(timer);
   }, []);
@@ -23,15 +23,15 @@ export default function LoadingScreen() {
       <motion.div
         initial={{ scale: 0.5, opacity: 0 }}
         animate={{ scale: 1, opacity: 1 }}
-        transition={{ duration: 0.5, ease: "easeOut" }}
-        className="mb-6"
+        transition={{ duration: 0.8, ease: "easeOut" }}
+        className="mb-8"
       >
         <img 
           src="/images/RVCLOGO.jpg" 
           alt="RVC Logo" 
-          className="w-24 h-24 md:w-40 md:h-40 rounded-full object-cover"
+          className="w-28 h-28 md:w-40 md:h-40 rounded-full object-cover"
           style={{
-            filter: 'drop-shadow(0 0 20px rgba(255,215,0,0.8))',
+            filter: 'drop-shadow(0 0 30px rgba(255,215,0,0.8)) drop-shadow(0 0 60px rgba(255,215,0,0.4))',
           }}
           onError={(e) => {
             e.target.style.display = 'none';
@@ -40,10 +40,10 @@ export default function LoadingScreen() {
       </motion.div>
 
       <motion.h1
-        initial={{ opacity: 0, y: 15 }}
+        initial={{ opacity: 0, y: 20 }}
         animate={{ opacity: 1, y: 0 }}
-        transition={{ delay: 0.3, duration: 0.5 }}
-        className="text-3xl md:text-6xl font-black mb-3"
+        transition={{ delay: 0.5, duration: 0.8 }}
+        className="text-4xl md:text-6xl font-black mb-4"
       >
         <span className="gold-text">RVC</span>
       </motion.h1>
@@ -51,16 +51,16 @@ export default function LoadingScreen() {
       <motion.p
         initial={{ opacity: 0 }}
         animate={{ opacity: 1 }}
-        transition={{ delay: 0.5 }}
-        className="text-base md:text-xl silver-text mb-6"
+        transition={{ delay: 1 }}
+        className="text-lg md:text-xl silver-text mb-8"
       >
         Esports Management
       </motion.p>
 
       <motion.div
         initial={{ width: 0 }}
-        animate={{ width: '150px' }}
-        transition={{ duration: 0.8, ease: "easeInOut" }}
+        animate={{ width: '200px' }}
+        transition={{ duration: 2, ease: "easeInOut" }}
         className="h-1 bg-gradient-to-r from-yellow-500 to-yellow-300 rounded-full"
       />
     </motion.div>
