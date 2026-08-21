@@ -2,7 +2,7 @@ import { useState, useEffect, useRef } from 'react';
 import { motion } from 'framer-motion';
 import { db } from '../../lib/firebase';
 import { collection, addDoc, getDocs, deleteDoc, doc, updateDoc, writeBatch } from 'firebase/firestore';
-import { Plus, Edit, Trash2, Upload, X, GripVertical } from 'lucide-react';
+import { Plus, Edit, Trash2, Upload, X, GripVertical, Users } from 'lucide-react';
 import {
   DndContext,
   closestCenter,
