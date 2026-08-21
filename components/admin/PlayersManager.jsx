@@ -16,12 +16,6 @@ export default function PlayersManager() {
     role: 'Jungler',
     team: '',
     image: '',
-    stats: {
-      winRate: 0,
-      kda: 0,
-      matches: 0,
-      mvpCount: 0,
-    },
   });
 
   useEffect(() => {
@@ -46,38 +40,27 @@ export default function PlayersManager() {
       return;
     }
 
-    if (file.size > 10 * 1024 * 1024) {
-      toast.error('Image must be less than 10MB');
-      return;
-    }
-
     setUploading(true);
     
     try {
       const formData = new FormData();
       formData.append('file', file);
-      formData.append('upload_preset', 'RVC_UPLOADS');
+      formData.append('upload_preset', 'RVC_MEDIA');
 
       const response = await fetch(
         'https://api.cloudinary.com/v1_1/qmsxe5lq/image/upload',
-        {
-          method: 'POST',
-          body: formData,
-        }
+        { method: 'POST', body: formData }
       );
 
       const data = await response.json();
-
       if (data.secure_url) {
         setForm(prev => ({ ...prev, image: data.secure_url }));
-        toast.success('Image uploaded successfully!');
+        toast.success('Image uploaded!');
       } else {
-        console.error('Cloudinary error:', data);
-        toast.error('Upload failed: ' + (data.error?.message || 'Unknown error'));
+        toast.error('Upload failed');
       }
     } catch (error) {
-      console.error('Upload error:', error);
-      toast.error('Failed to upload image');
+      toast.error('Upload failed');
     } finally {
       setUploading(false);
     }
@@ -87,27 +70,21 @@ export default function PlayersManager() {
     e.preventDefault();
     
     if (!form.name || !form.role) {
-      toast.error('Please fill in Player Name and Role');
+      toast.error('Please fill in Name and Role');
       return;
     }
 
     try {
       if (editingPlayer) {
         await updateDoc(doc(db, 'players', editingPlayer.id), form);
-        toast.success('Player updated successfully!');
+        toast.success('Player updated!');
       } else {
         await addDoc(collection(db, 'players'), form);
-        toast.success('Player added successfully!');
+        toast.success('Player added!');
       }
       setIsModalOpen(false);
       setEditingPlayer(null);
-      setForm({
-        name: '',
-        role: 'Jungler',
-        team: '',
-        image: '',
-        stats: { winRate: 0, kda: 0, matches: 0, mvpCount: 0 },
-      });
+      setForm({ name: '', role: 'Jungler', team: '', image: '' });
       fetchPlayers();
     } catch (error) {
       console.error('Save error:', error);
@@ -116,14 +93,13 @@ export default function PlayersManager() {
   };
 
   const handleDelete = async (id) => {
-    if (confirm('Are you sure you want to delete this player?')) {
+    if (confirm('Delete this player?')) {
       try {
         await deleteDoc(doc(db, 'players', id));
         toast.success('Player deleted!');
         fetchPlayers();
       } catch (error) {
-        console.error('Delete error:', error);
-        toast.error('Failed to delete player');
+        toast.error('Failed to delete');
       }
     }
   };
@@ -135,16 +111,10 @@ export default function PlayersManager() {
         <button
           onClick={() => {
             setEditingPlayer(null);
-            setForm({
-              name: '',
-              role: 'Jungler',
-              team: '',
-              image: '',
-              stats: { winRate: 0, kda: 0, matches: 0, mvpCount: 0 },
-            });
+            setForm({ name: '', role: 'Jungler', team: '', image: '' });
             setIsModalOpen(true);
           }}
-          className="flex items-center space-x-2 px-4 py-2 bg-yellow-500 text-black font-semibold rounded-lg hover:bg-yellow-400 transition-colors"
+          className="flex items-center space-x-2 px-4 py-2 bg-yellow-500 text-black font-semibold rounded-lg hover:bg-yellow-400"
         >
           <Plus className="w-4 h-4" />
           <span>Add Player</span>
@@ -154,75 +124,48 @@ export default function PlayersManager() {
       {players.length === 0 ? (
         <div className="text-center py-12 text-gray-400">
           <Gamepad2 className="w-16 h-16 mx-auto mb-4 text-gray-600" />
-          <p>No players yet. Click "Add Player" to create your first player!</p>
+          <p>No players yet. Click "Add Player" to create one!</p>
         </div>
       ) : (
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+        <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-3 md:gap-4">
           {players.map((player) => (
             <motion.div
               key={player.id}
-              whileHover={{ scale: 1.02 }}
+              whileHover={{ scale: 1.03 }}
               className="bg-gray-900 rounded-xl border border-yellow-500/30 overflow-hidden"
             >
               {/* Player Image */}
               <div className="relative w-full aspect-square">
                 {player.image ? (
-                  <img 
-                    src={player.image} 
-                    alt={player.name} 
-                    className="w-full h-full object-cover object-center"
-                    onError={(e) => {
-                      e.target.style.display = 'none';
-                      e.target.parentElement.style.background = 'linear-gradient(135deg, #FFD700, #1a1a1a)';
-                    }}
-                  />
+                  <img src={player.image} alt={player.name} className="w-full h-full object-cover" />
                 ) : (
                   <div className="w-full h-full bg-gradient-to-br from-yellow-500/20 to-gray-700 flex items-center justify-center">
-                    <Gamepad2 className="w-12 h-12 text-gray-500" />
+                    <Gamepad2 className="w-8 h-8 text-gray-500" />
                   </div>
                 )}
               </div>
               
               {/* Player Info */}
-              <div className="p-4 border-t border-yellow-500/30">
-                <h3 className="text-xl font-bold gold-text mb-1">{player.name}</h3>
-                <p className="text-gray-400 text-sm mb-1">{player.role}</p>
-                {player.team && <p className="text-gray-400 text-sm mb-3">{player.team}</p>}
+              <div className="p-3">
+                <h3 className="text-sm font-bold gold-text truncate">{player.name}</h3>
+                <p className="text-gray-400 text-xs">{player.role}</p>
+                {player.team && <p className="text-gray-500 text-xs">{player.team}</p>}
                 
-                <div className="grid grid-cols-4 gap-2 text-center text-xs mb-3">
-                  <div>
-                    <p className="text-yellow-500 font-bold">{player.stats?.winRate || 0}%</p>
-                    <p className="text-gray-500">Win Rate</p>
-                  </div>
-                  <div>
-                    <p className="text-yellow-500 font-bold">{player.stats?.kda || 0}</p>
-                    <p className="text-gray-500">KDA</p>
-                  </div>
-                  <div>
-                    <p className="text-yellow-500 font-bold">{player.stats?.matches || 0}</p>
-                    <p className="text-gray-500">Matches</p>
-                  </div>
-                  <div>
-                    <p className="text-yellow-500 font-bold">{player.stats?.mvpCount || 0}</p>
-                    <p className="text-gray-500">MVP</p>
-                  </div>
-                </div>
-
-                <div className="flex space-x-2">
+                <div className="flex space-x-1 mt-2">
                   <button
                     onClick={() => {
                       setEditingPlayer(player);
                       setForm(player);
                       setIsModalOpen(true);
                     }}
-                    className="flex-1 flex items-center justify-center space-x-1 px-3 py-2 bg-blue-500/20 text-blue-400 rounded-lg hover:bg-blue-500/30 text-sm"
+                    className="flex-1 flex items-center justify-center space-x-1 px-2 py-1.5 bg-blue-500/20 text-blue-400 rounded text-xs"
                   >
                     <Edit className="w-3 h-3" />
                     <span>Edit</span>
                   </button>
                   <button
                     onClick={() => handleDelete(player.id)}
-                    className="flex-1 flex items-center justify-center space-x-1 px-3 py-2 bg-red-500/20 text-red-400 rounded-lg hover:bg-red-500/30 text-sm"
+                    className="flex-1 flex items-center justify-center space-x-1 px-2 py-1.5 bg-red-500/20 text-red-400 rounded text-xs"
                   >
                     <Trash2 className="w-3 h-3" />
                     <span>Delete</span>
@@ -242,8 +185,8 @@ export default function PlayersManager() {
               <h3 className="text-2xl font-bold gold-text">
                 {editingPlayer ? 'Edit Player' : 'Add Player'}
               </h3>
-              <button onClick={() => setIsModalOpen(false)} className="text-gray-400 hover:text-white">
-                <X className="w-5 h-5" />
+              <button onClick={() => setIsModalOpen(false)}>
+                <X className="w-5 h-5 text-gray-400" />
               </button>
             </div>
             
@@ -253,15 +196,11 @@ export default function PlayersManager() {
                 <label className="block text-sm silver-text mb-2">Player Image</label>
                 {form.image ? (
                   <div className="relative">
-                    <img 
-                      src={form.image} 
-                      alt="Player Preview" 
-                      className="w-full aspect-square object-cover rounded-lg"
-                    />
+                    <img src={form.image} alt="Player" className="w-full h-40 object-cover rounded-lg" />
                     <button
                       type="button"
                       onClick={() => setForm({ ...form, image: '' })}
-                      className="absolute top-2 right-2 bg-red-500 p-1 rounded-full hover:bg-red-600"
+                      className="absolute top-2 right-2 bg-red-500 p-1 rounded-full"
                     >
                       <X className="w-4 h-4 text-white" />
                     </button>
@@ -269,18 +208,17 @@ export default function PlayersManager() {
                 ) : (
                   <div
                     onClick={() => fileInputRef.current?.click()}
-                    className="flex flex-col items-center justify-center space-y-2 w-full aspect-square border-2 border-dashed border-gray-700 rounded-lg cursor-pointer hover:border-yellow-500 transition-colors"
+                    className="flex flex-col items-center justify-center w-full h-40 border-2 border-dashed border-gray-700 rounded-lg cursor-pointer hover:border-yellow-500"
                   >
                     {uploading ? (
                       <>
-                        <div className="w-8 h-8 border-4 border-yellow-500 border-t-transparent rounded-full animate-spin" />
-                        <span className="text-gray-400">Uploading...</span>
+                        <div className="w-6 h-6 border-4 border-yellow-500 border-t-transparent rounded-full animate-spin" />
+                        <span className="text-gray-400 text-sm">Uploading...</span>
                       </>
                     ) : (
                       <>
-                        <Upload className="w-8 h-8 text-gray-400" />
-                        <span className="text-gray-400">Click to upload image</span>
-                        <span className="text-xs text-gray-500">PNG, JPG up to 10MB</span>
+                        <Upload className="w-6 h-6 text-gray-400" />
+                        <span className="text-gray-400 text-sm">Upload Player Image</span>
                       </>
                     )}
                   </div>
@@ -298,10 +236,10 @@ export default function PlayersManager() {
                 <label className="block text-sm silver-text mb-2">Player Name *</label>
                 <input
                   type="text"
-                  placeholder="e.g., Ace"
                   value={form.name}
                   onChange={(e) => setForm({ ...form, name: e.target.value })}
-                  className="w-full px-4 py-2 bg-black border border-gray-700 rounded-lg focus:border-yellow-500 focus:outline-none text-white"
+                  className="w-full px-4 py-2 bg-black border border-gray-700 rounded-lg text-white"
+                  placeholder="e.g., Ace"
                   required
                 />
               </div>
@@ -311,7 +249,7 @@ export default function PlayersManager() {
                 <select
                   value={form.role}
                   onChange={(e) => setForm({ ...form, role: e.target.value })}
-                  className="w-full px-4 py-2 bg-black border border-gray-700 rounded-lg focus:border-yellow-500 focus:outline-none text-white"
+                  className="w-full px-4 py-2 bg-black border border-gray-700 rounded-lg text-white"
                 >
                   <option>Jungler</option>
                   <option>Mid Laner</option>
@@ -324,70 +262,19 @@ export default function PlayersManager() {
               </div>
 
               <div>
-                <label className="block text-sm silver-text mb-2">Team</label>
+                <label className="block text-sm silver-text mb-2">Team (Optional)</label>
                 <input
                   type="text"
-                  placeholder="e.g., Team Alpha"
                   value={form.team}
                   onChange={(e) => setForm({ ...form, team: e.target.value })}
-                  className="w-full px-4 py-2 bg-black border border-gray-700 rounded-lg focus:border-yellow-500 focus:outline-none text-white"
+                  className="w-full px-4 py-2 bg-black border border-gray-700 rounded-lg text-white"
+                  placeholder="e.g., Team Alpha"
                 />
               </div>
 
-              <div className="grid grid-cols-4 gap-2">
-                <div>
-                  <label className="block text-xs silver-text mb-1">Win Rate %</label>
-                  <input
-                    type="number"
-                    value={form.stats?.winRate || 0}
-                    onChange={(e) => setForm({ ...form, stats: { ...form.stats, winRate: parseInt(e.target.value) || 0 } })}
-                    className="w-full px-2 py-2 bg-black border border-gray-700 rounded-lg text-white text-sm"
-                  />
-                </div>
-                <div>
-                  <label className="block text-xs silver-text mb-1">KDA</label>
-                  <input
-                    type="number"
-                    step="0.1"
-                    value={form.stats?.kda || 0}
-                    onChange={(e) => setForm({ ...form, stats: { ...form.stats, kda: parseFloat(e.target.value) || 0 } })}
-                    className="w-full px-2 py-2 bg-black border border-gray-700 rounded-lg text-white text-sm"
-                  />
-                </div>
-                <div>
-                  <label className="block text-xs silver-text mb-1">Matches</label>
-                  <input
-                    type="number"
-                    value={form.stats?.matches || 0}
-                    onChange={(e) => setForm({ ...form, stats: { ...form.stats, matches: parseInt(e.target.value) || 0 } })}
-                    className="w-full px-2 py-2 bg-black border border-gray-700 rounded-lg text-white text-sm"
-                  />
-                </div>
-                <div>
-                  <label className="block text-xs silver-text mb-1">MVP</label>
-                  <input
-                    type="number"
-                    value={form.stats?.mvpCount || 0}
-                    onChange={(e) => setForm({ ...form, stats: { ...form.stats, mvpCount: parseInt(e.target.value) || 0 } })}
-                    className="w-full px-2 py-2 bg-black border border-gray-700 rounded-lg text-white text-sm"
-                  />
-                </div>
-              </div>
-
-              <div className="flex space-x-4 pt-4">
-                <button
-                  type="button"
-                  onClick={() => setIsModalOpen(false)}
-                  className="flex-1 py-2 bg-gray-700 text-gray-300 rounded-lg hover:bg-gray-600 transition-colors"
-                >
-                  Cancel
-                </button>
-                <button
-                  type="submit"
-                  className="flex-1 py-2 bg-yellow-500 text-black font-semibold rounded-lg hover:bg-yellow-400 transition-colors"
-                >
-                  {editingPlayer ? 'Update Player' : 'Save Player'}
-                </button>
+              <div className="flex space-x-4 pt-2">
+                <button type="button" onClick={() => setIsModalOpen(false)} className="flex-1 py-2 bg-gray-700 text-gray-300 rounded-lg">Cancel</button>
+                <button type="submit" className="flex-1 py-2 bg-yellow-500 text-black font-semibold rounded-lg">Save</button>
               </div>
             </form>
           </div>
