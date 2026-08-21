@@ -34,17 +34,17 @@ export default function TournamentPage() {
   };
 
   return (
-    <div className="min-h-screen bg-black pt-20">
+    <div className="min-h-screen bg-black pt-16 md:pt-20">
       {/* Hero Section */}
-      <div className="relative py-12 md:py-20 text-center px-4">
+      <div className="relative py-10 md:py-20 text-center px-4">
         <div className="absolute inset-0 bg-gradient-to-b from-black to-gray-900" />
         <div className="relative z-10">
-          <Trophy className="w-14 h-14 md:w-16 md:h-16 text-yellow-500 mx-auto mb-4" />
+          <Trophy className="w-12 h-12 md:w-16 md:h-16 text-yellow-500 mx-auto mb-3 md:mb-4" />
           <motion.h1
             initial={{ opacity: 0, y: 50 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.8 }}
-            className="text-3xl md:text-5xl lg:text-7xl font-black mb-4"
+            className="text-2xl md:text-5xl lg:text-7xl font-black mb-3 md:mb-4"
           >
             <span className="gold-text">{tournamentData.title}</span>
           </motion.h1>
@@ -52,17 +52,17 @@ export default function TournamentPage() {
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             transition={{ delay: 0.5 }}
-            className="text-lg md:text-2xl silver-text mb-6 md:mb-8"
+            className="text-base md:text-2xl silver-text mb-6 md:mb-8"
           >
             {tournamentData.description}
           </motion.p>
 
-          {/* Buttons - Stack on mobile */}
+          {/* Buttons */}
           <motion.div
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             transition={{ delay: 1 }}
-            className="flex flex-col md:flex-row space-y-3 md:space-y-0 md:space-x-4 justify-center items-center"
+            className="flex flex-col md:flex-row space-y-3 md:space-y-0 md:space-x-4 justify-center items-center px-4"
           >
             <motion.a
               href={tournamentData.facebookUrl}
@@ -91,47 +91,41 @@ export default function TournamentPage() {
         </div>
       </div>
 
-      {/* Stats - Mobile Friendly */}
-      <div className="max-w-7xl mx-auto px-4 py-8 md:py-12">
-        <div className="grid grid-cols-1 sm:grid-cols-3 gap-3 md:gap-6 mb-8 md:mb-12">
-          <motion.div
-            whileHover={{ scale: 1.02 }}
-            className="bg-gray-900 p-4 md:p-6 rounded-xl border border-yellow-500/30 flex items-center space-x-3 md:flex-col md:space-x-0 md:text-center"
-          >
-            <Trophy className="w-8 h-8 md:w-10 md:h-10 text-yellow-500 md:mx-auto md:mb-2 flex-shrink-0" />
-            <div>
-              <p className="text-lg md:text-2xl font-bold gold-text break-words">{tournamentData.prizePool}</p>
-              <p className="text-gray-400 text-xs md:text-sm">Prize Pool</p>
-            </div>
-          </motion.div>
+      {/* Stats - 3 in a row on ALL screens */}
+      <div className="max-w-7xl mx-auto px-2 md:px-4 py-8 md:py-12">
+        <div className="grid grid-cols-3 gap-1 md:gap-6 mb-8 md:mb-12">
+          {/* Prize Pool */}
+          <div className="bg-gray-900 p-1.5 md:p-6 rounded-xl border border-yellow-500/30 text-center overflow-hidden">
+            <Trophy className="w-3 h-3 md:w-10 md:h-10 text-yellow-500 mx-auto mb-0.5 md:mb-2" />
+            <p className="text-[11px] md:text-2xl font-bold gold-text whitespace-nowrap truncate">
+              {tournamentData.prizePool}
+            </p>
+            <p className="text-gray-400 text-[8px] md:text-sm whitespace-nowrap">Prize Pool</p>
+          </div>
 
-          <motion.div
-            whileHover={{ scale: 1.02 }}
-            className="bg-gray-900 p-4 md:p-6 rounded-xl border border-yellow-500/30 flex items-center space-x-3 md:flex-col md:space-x-0 md:text-center"
-          >
-            <Users className="w-8 h-8 md:w-10 md:h-10 text-yellow-500 md:mx-auto md:mb-2 flex-shrink-0" />
-            <div>
-              <p className="text-lg md:text-2xl font-bold gold-text break-words">{tournamentData.teams}</p>
-              <p className="text-gray-400 text-xs md:text-sm">Teams</p>
-            </div>
-          </motion.div>
+          {/* Teams */}
+          <div className="bg-gray-900 p-1.5 md:p-6 rounded-xl border border-yellow-500/30 text-center overflow-hidden">
+            <Users className="w-3 h-3 md:w-10 md:h-10 text-yellow-500 mx-auto mb-0.5 md:mb-2" />
+            <p className="text-[11px] md:text-2xl font-bold gold-text whitespace-nowrap">
+              {tournamentData.teams}
+            </p>
+            <p className="text-gray-400 text-[8px] md:text-sm whitespace-nowrap">Teams</p>
+          </div>
 
-          <motion.div
-            whileHover={{ scale: 1.02 }}
-            className="bg-gray-900 p-4 md:p-6 rounded-xl border border-yellow-500/30 flex items-center space-x-3 md:flex-col md:space-x-0 md:text-center"
-          >
-            <Calendar className="w-8 h-8 md:w-10 md:h-10 text-yellow-500 md:mx-auto md:mb-2 flex-shrink-0" />
-            <div>
-              <p className="text-lg md:text-2xl font-bold gold-text break-words">{tournamentData.date}</p>
-              <p className="text-gray-400 text-xs md:text-sm">Season</p>
-            </div>
-          </motion.div>
+          {/* Date */}
+          <div className="bg-gray-900 p-1.5 md:p-6 rounded-xl border border-yellow-500/30 text-center overflow-hidden">
+            <Calendar className="w-3 h-3 md:w-10 md:h-10 text-yellow-500 mx-auto mb-0.5 md:mb-2" />
+            <p className="text-[10px] md:text-2xl font-bold gold-text whitespace-nowrap">
+              {tournamentData.date}
+            </p>
+            <p className="text-gray-400 text-[8px] md:text-sm whitespace-nowrap">Season</p>
+          </div>
         </div>
 
         {/* Challonge Bracket */}
         <div className="bg-gray-900 rounded-xl border-2 border-yellow-500/30 p-3 md:p-6">
           <div className="flex flex-col md:flex-row md:justify-between md:items-center mb-4 md:mb-6 gap-2">
-            <h2 className="text-xl md:text-3xl font-bold gold-text">Tournament Bracket</h2>
+            <h2 className="text-lg md:text-3xl font-bold gold-text">Tournament Bracket</h2>
             <a
               href={tournamentData.challongeUrl}
               target="_blank"
