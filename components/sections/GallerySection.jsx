@@ -2,7 +2,7 @@ import { motion } from 'framer-motion';
 import { useState, useEffect } from 'react';
 import { db } from '../../lib/firebase';
 import { collection, getDocs } from 'firebase/firestore';
-import { ImagePlus, X, Video } from 'lucide-react';
+import { ImagePlus, X, Video, Play } from 'lucide-react';
 
 export default function GallerySection() {
   const [gallery, setGallery] = useState([]);
@@ -30,6 +30,7 @@ export default function GallerySection() {
         <motion.h2
           initial={{ opacity: 0, y: 50 }}
           whileInView={{ opacity: 1, y: 0 }}
+          viewport={{ amount: 0.5 }}
           className="text-5xl font-bold mb-12 text-center"
         >
           <span className="gold-text">Gallery</span>
@@ -45,70 +46,83 @@ export default function GallerySection() {
             <p>No media yet</p>
           </div>
         ) : (
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+          <div className="grid grid-cols-2 md:grid-cols-3 gap-3 md:gap-6">
             {gallery.map((item, index) => (
               <motion.div
                 key={item.id}
                 initial={{ opacity: 0, scale: 0.8 }}
                 whileInView={{ opacity: 1, scale: 1 }}
                 viewport={{ amount: 0.3 }}
-                transition={{ delay: index * 0.1 }}
-                whileHover={{ scale: 1.05 }}
-                className="relative group cursor-pointer aspect-square"
+                transition={{ delay: index * 0.05 }}
+                whileHover={{ scale: 1.03 }}
+                className="relative cursor-pointer aspect-square rounded-lg overflow-hidden border-2 border-yellow-500/30"
                 onClick={() => setSelectedItem(item)}
               >
                 {item.type === 'video' ? (
-                  <video
-                    src={item.url}
-                    className="w-full h-full object-cover rounded-lg border-2 border-yellow-500/30"
-                    muted
-                    loop
-                    playsInline
-                    onMouseEnter={(e) => e.target.play()}
-                    onMouseLeave={(e) => e.target.pause()}
-                  />
+                  <>
+                    <video
+                      src={item.url}
+                      className="w-full h-full object-cover"
+                      muted
+                      loop
+                      playsInline
+                      preload="metadata"
+                    />
+                    {/* Play icon overlay - makes it obvious it's clickable */}
+                    <div className="absolute inset-0 flex items-center justify-center bg-black/30">
+                      <div className="w-12 h-12 md:w-16 md:h-16 rounded-full bg-yellow-500 flex items-center justify-center">
+                        <Play className="w-6 h-6 md:w-8 md:h-8 text-black" />
+                      </div>
+                    </div>
+                    <div className="absolute top-2 left-2 bg-black/50 p-1 rounded">
+                      <Video className="w-3 h-3 md:w-4 md:h-4 text-yellow-500" />
+                    </div>
+                  </>
                 ) : (
                   <img
                     src={item.url}
-                    alt={item.title}
-                    className="w-full h-full object-cover rounded-lg border-2 border-yellow-500/30"
+                    alt={item.title || 'Gallery'}
+                    className="w-full h-full object-cover"
                   />
                 )}
                 
-                <div className="absolute inset-0 bg-gradient-to-t from-black via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity rounded-lg">
-                  <div className="absolute bottom-0 left-0 right-0 p-4">
-                    <p className="text-white font-semibold">{item.title || 'Untitled'}</p>
-                    <p className="text-yellow-500 text-sm">{item.category || 'General'}</p>
-                  </div>
+                {/* Title overlay */}
+                <div className="absolute bottom-0 left-0 right-0 bg-gradient-to-t from-black to-transparent p-2 md:p-3">
+                  <p className="text-white text-xs md:text-sm font-semibold truncate">{item.title || 'Untitled'}</p>
                 </div>
-
-                {item.type === 'video' && (
-                  <div className="absolute top-2 left-2 bg-black/50 p-1 rounded">
-                    <Video className="w-4 h-4 text-yellow-500" />
-                  </div>
-                )}
               </motion.div>
             ))}
           </div>
         )}
       </div>
 
-      {/* Lightbox for Image or Video */}
+      {/* Lightbox - Works on Mobile */}
       {selectedItem && (
         <motion.div
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
-          className="fixed inset-0 z-[100] bg-black/90 flex items-center justify-center p-4"
+          className="fixed inset-0 z-[100] bg-black/95 flex items-center justify-center p-4"
           onClick={() => setSelectedItem(null)}
         >
           {selectedItem.type === 'video' ? (
-            <video src={selectedItem.url} controls autoPlay className="max-w-full max-h-full rounded-lg" />
+            <video 
+              src={selectedItem.url} 
+              controls 
+              autoPlay 
+              playsInline
+              className="max-w-full max-h-full rounded-lg"
+              onClick={(e) => e.stopPropagation()}
+            />
           ) : (
-            <img src={selectedItem.url} alt={selectedItem.title} className="max-w-full max-h-full rounded-lg" />
+            <img 
+              src={selectedItem.url} 
+              alt={selectedItem.title} 
+              className="max-w-full max-h-full rounded-lg"
+            />
           )}
           <button
             onClick={() => setSelectedItem(null)}
-            className="absolute top-4 right-4 text-white text-2xl bg-black/50 p-2 rounded-full"
+            className="absolute top-4 right-4 text-white text-2xl bg-black/50 p-2 rounded-full w-10 h-10 flex items-center justify-center"
           >
             <X className="w-6 h-6" />
           </button>
