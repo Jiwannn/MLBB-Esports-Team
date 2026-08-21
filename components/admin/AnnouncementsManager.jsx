@@ -86,15 +86,15 @@ export default function AnnouncementsManager() {
   };
 
   return (
-    <div>
-      <div className="flex flex-col sm:flex-row sm:justify-between sm:items-center gap-3 mb-4 md:mb-6">
-        <h2 className="text-xl md:text-2xl font-bold gold-text">Announcements</h2>
+    <div className="w-full max-w-full overflow-x-hidden">
+      <div className="flex flex-col sm:flex-row sm:justify-between sm:items-center gap-2 mb-4 md:mb-6 w-full">
+        <h2 className="text-xl md:text-2xl font-bold gold-text shrink-0">Announcements</h2>
         <button
           onClick={() => { setEditingAnnouncement(null); setForm({ title: '', content: '', image: '' }); setIsModalOpen(true); }}
-          className="flex items-center justify-center space-x-2 px-4 py-2 bg-yellow-500 text-black font-semibold rounded-lg text-sm md:text-base"
+          className="flex items-center justify-center space-x-2 px-4 py-2 bg-yellow-500 text-black font-semibold rounded-lg text-sm md:text-base shrink-0"
         >
           <Plus className="w-4 h-4" />
-          <span>Add Announcement</span>
+          <span>Add</span>
         </button>
       </div>
 
@@ -104,12 +104,12 @@ export default function AnnouncementsManager() {
           <p className="text-sm">No announcements yet</p>
         </div>
       ) : (
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-3 md:gap-4">
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-3 w-full">
           {announcements.map((announcement) => (
             <motion.div
               key={announcement.id}
               whileHover={{ scale: 1.01 }}
-              className="bg-gray-900 rounded-lg border border-yellow-500/30 overflow-hidden"
+              className="bg-gray-900 rounded-lg border border-yellow-500/30 overflow-hidden w-full"
             >
               {announcement.image && (
                 <div className="relative w-full h-32 md:h-40">
@@ -118,16 +118,15 @@ export default function AnnouncementsManager() {
                 </div>
               )}
 
-              <div className="p-3 md:p-4">
-                {/* Author Info - Mobile friendly */}
+              <div className="p-3 md:p-4 w-full">
                 {announcement.authorEmail && (
-                  <div className="flex items-center space-x-2 mb-2">
-                    <div className="w-6 h-6 md:w-7 md:h-7 rounded-full bg-gradient-to-br from-yellow-500 to-yellow-300 flex items-center justify-center flex-shrink-0">
+                  <div className="flex items-center space-x-2 mb-2 w-full">
+                    <div className="w-6 h-6 md:w-7 md:h-7 rounded-full bg-gradient-to-br from-yellow-500 to-yellow-300 flex items-center justify-center shrink-0">
                       <span className="text-black font-bold text-[10px] md:text-xs">
                         {announcement.authorEmail?.charAt(0)?.toUpperCase() || 'A'}
                       </span>
                     </div>
-                    <div className="min-w-0 flex-1">
+                    <div className="min-w-0 flex-1 overflow-hidden">
                       <p className="text-[10px] md:text-xs text-gray-300 truncate">{announcement.authorEmail}</p>
                       <p className="text-[8px] md:text-[10px] text-gray-500">
                         {announcement.createdAt ? new Date(announcement.createdAt).toLocaleString() : ''}
@@ -136,22 +135,22 @@ export default function AnnouncementsManager() {
                   </div>
                 )}
 
-                <h3 className="text-xs md:text-sm font-bold gold-text mb-1">{announcement.title}</h3>
-                <p className="text-gray-400 text-[10px] md:text-xs">{announcement.content}</p>
+                <h3 className="text-xs md:text-sm font-bold gold-text mb-1 break-words">{announcement.title}</h3>
+                <p className="text-gray-400 text-[10px] md:text-xs break-words">{announcement.content}</p>
 
-                <div className="flex space-x-1 md:space-x-2 mt-2 md:mt-3">
+                <div className="flex space-x-1 md:space-x-2 mt-2 md:mt-3 w-full">
                   <button
                     onClick={() => { setEditingAnnouncement(announcement); setForm(announcement); setIsModalOpen(true); }}
                     className="flex-1 flex items-center justify-center space-x-1 px-2 md:px-3 py-1.5 bg-blue-500/20 text-blue-400 rounded text-[10px] md:text-xs"
                   >
-                    <Edit className="w-3 h-3" />
+                    <Edit className="w-3 h-3 shrink-0" />
                     <span>Edit</span>
                   </button>
                   <button
                     onClick={() => handleDelete(announcement.id)}
                     className="flex-1 flex items-center justify-center space-x-1 px-2 md:px-3 py-1.5 bg-red-500/20 text-red-400 rounded text-[10px] md:text-xs"
                   >
-                    <Trash2 className="w-3 h-3" />
+                    <Trash2 className="w-3 h-3 shrink-0" />
                     <span>Delete</span>
                   </button>
                 </div>
@@ -161,7 +160,7 @@ export default function AnnouncementsManager() {
         </div>
       )}
 
-      {/* Modal - Mobile friendly */}
+      {/* Modal */}
       {isModalOpen && (
         <div className="fixed inset-0 bg-black/80 flex items-end sm:items-center justify-center z-50 sm:p-4">
           <div className="bg-gray-900 p-4 md:p-6 rounded-t-xl sm:rounded-xl w-full max-w-md max-h-[90vh] overflow-y-auto">
