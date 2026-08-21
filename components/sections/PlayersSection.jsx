@@ -3,6 +3,7 @@ import { useState, useEffect } from 'react';
 import { db } from '../../lib/firebase';
 import { collection, getDocs } from 'firebase/firestore';
 import { Gamepad2 } from 'lucide-react';
+import PlayerCard3D from '../3d/PlayerCard3D';
 
 export default function PlayersSection() {
   const [players, setPlayers] = useState([]);
@@ -46,7 +47,7 @@ export default function PlayersSection() {
             <p>No players yet</p>
           </div>
         ) : (
-          <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-3 md:gap-6">
+          <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4 md:gap-6">
             {players.map((player, index) => (
               <motion.div
                 key={player.id}
@@ -54,32 +55,8 @@ export default function PlayersSection() {
                 whileInView={{ opacity: 1, y: 0 }}
                 viewport={{ amount: 0.3 }}
                 transition={{ delay: index * 0.05 }}
-                whileHover={{ scale: 1.03 }}
-                className="bg-black rounded-xl border border-yellow-500/30 overflow-hidden"
               >
-                {/* Player Image */}
-                <div className="relative w-full aspect-square">
-                  {player.image ? (
-                    <img 
-                      src={player.image} 
-                      alt={player.name} 
-                      className="w-full h-full object-cover"
-                    />
-                  ) : (
-                    <div className="w-full h-full bg-gradient-to-br from-yellow-500/20 to-gray-700 flex items-center justify-center">
-                      <Gamepad2 className="w-10 h-10 text-gray-500" />
-                    </div>
-                  )}
-                </div>
-                
-                {/* Player Info - NO STATS */}
-                <div className="p-3 md:p-4 text-center">
-                  <h3 className="text-sm md:text-base font-bold gold-text truncate">{player.name}</h3>
-                  <p className="text-gray-400 text-xs md:text-sm">{player.role}</p>
-                  {player.team && (
-                    <p className="text-gray-500 text-xs mt-1">{player.team}</p>
-                  )}
-                </div>
+                <PlayerCard3D player={player} />
               </motion.div>
             ))}
           </div>
