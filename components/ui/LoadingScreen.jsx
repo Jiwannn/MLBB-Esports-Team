@@ -68,13 +68,6 @@ export default function LoadingScreen() {
             transition={{ duration: 2, ease: "easeInOut" }}
             className="h-1 bg-gradient-to-r from-yellow-500 to-yellow-300 rounded-full"
           />
-
-          {/* Spinning circle */}
-          <motion.div
-            animate={{ rotate: 360 }}
-            transition={{ repeat: Infinity, duration: 2, ease: "linear" }}
-            className="absolute bottom-10 w-8 h-8 border-4 border-yellow-500/30 border-t-yellow-500 rounded-full"
-          />
         </motion.div>
       )}
     </AnimatePresence>
