@@ -56,9 +56,12 @@ export default function MatchManager() {
       const data = await response.json();
       if (data.secure_url) {
         setForm(prev => ({ ...prev, banner: data.secure_url }));
-        toast.success('Banner uploaded!');
+        toast.success('Opponent banner uploaded!');
+      } else {
+        toast.error('Upload failed: ' + (data.error?.message || 'Unknown'));
       }
     } catch (error) {
+      console.error('Upload error:', error);
       toast.error('Upload failed');
     } finally {
       setUploading(false);
@@ -96,15 +99,20 @@ export default function MatchManager() {
       });
       fetchMatches();
     } catch (error) {
+      console.error('Save error:', error);
       toast.error('Failed to save match');
     }
   };
 
   const handleDelete = async (id) => {
     if (confirm('Delete this match?')) {
-      await deleteDoc(doc(db, 'matches', id));
-      toast.success('Match deleted!');
-      fetchMatches();
+      try {
+        await deleteDoc(doc(db, 'matches', id));
+        toast.success('Match deleted!');
+        fetchMatches();
+      } catch (error) {
+        toast.error('Failed to delete');
+      }
     }
   };
 
@@ -138,7 +146,7 @@ export default function MatchManager() {
             });
             setIsModalOpen(true);
           }}
-          className="flex items-center space-x-2 px-4 py-2 bg-yellow-500 text-black font-semibold rounded-lg"
+          className="flex items-center space-x-2 px-4 py-2 bg-yellow-500 text-black font-semibold rounded-lg hover:bg-yellow-400"
         >
           <Plus className="w-4 h-4" />
           <span>Add Match</span>
@@ -148,7 +156,7 @@ export default function MatchManager() {
       {matches.length === 0 ? (
         <div className="text-center py-12 text-gray-400">
           <Swords className="w-16 h-16 mx-auto mb-4 text-gray-600" />
-          <p>No matches yet</p>
+          <p>No matches yet. Click "Add Match" to schedule one!</p>
         </div>
       ) : (
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
@@ -158,8 +166,8 @@ export default function MatchManager() {
               whileHover={{ scale: 1.02 }}
               className="bg-gray-900 rounded-xl border border-yellow-500/30 overflow-hidden"
             >
-              {/* Match Banner */}
-              <div className="relative w-full h-40">
+              {/* Opponent Banner */}
+              <div className="relative w-full h-36 md:h-40">
                 {match.banner ? (
                   <img src={match.banner} alt={match.opponent} className="w-full h-full object-cover" />
                 ) : (
@@ -175,11 +183,11 @@ export default function MatchManager() {
 
               {/* Match Info */}
               <div className="p-4">
-                <p className="text-sm text-gray-400">{match.tournament}</p>
+                <p className="text-xs text-gray-400">{match.tournament}</p>
                 <div className="flex items-center justify-between my-2">
-                  <span className="font-bold gold-text">RVC</span>
-                  <span className="text-gray-500">VS</span>
-                  <span className="font-bold silver-text">{match.opponent}</span>
+                  <span className="font-bold gold-text text-sm">RVC</span>
+                  <span className="text-gray-500 text-xs">VS</span>
+                  <span className="font-bold silver-text text-sm">{match.opponent}</span>
                 </div>
                 <div className="flex justify-between text-xs text-gray-400">
                   <span>{match.date ? new Date(match.date).toLocaleDateString() : 'TBD'}</span>
@@ -193,16 +201,16 @@ export default function MatchManager() {
                       setForm(match);
                       setIsModalOpen(true);
                     }}
-                    className="flex-1 flex items-center justify-center space-x-1 px-3 py-2 bg-blue-500/20 text-blue-400 rounded-lg"
+                    className="flex-1 flex items-center justify-center space-x-1 px-3 py-2 bg-blue-500/20 text-blue-400 rounded-lg text-xs"
                   >
-                    <Edit className="w-4 h-4" />
+                    <Edit className="w-3 h-3" />
                     <span>Edit</span>
                   </button>
                   <button
                     onClick={() => handleDelete(match.id)}
-                    className="flex-1 flex items-center justify-center space-x-1 px-3 py-2 bg-red-500/20 text-red-400 rounded-lg"
+                    className="flex-1 flex items-center justify-center space-x-1 px-3 py-2 bg-red-500/20 text-red-400 rounded-lg text-xs"
                   >
-                    <Trash2 className="w-4 h-4" />
+                    <Trash2 className="w-3 h-3" />
                     <span>Delete</span>
                   </button>
                 </div>
@@ -226,12 +234,12 @@ export default function MatchManager() {
             </div>
             
             <form onSubmit={handleSubmit} className="space-y-4">
-              {/* Banner Upload */}
+              {/* Opponent Banner Upload */}
               <div>
-                <label className="block text-sm silver-text mb-2">Match Banner</label>
+                <label className="block text-sm silver-text mb-2">Opponent Banner</label>
                 {form.banner ? (
                   <div className="relative">
-                    <img src={form.banner} alt="Banner" className="w-full h-32 object-cover rounded-lg" />
+                    <img src={form.banner} alt="Opponent Banner" className="w-full h-32 object-cover rounded-lg" />
                     <button
                       type="button"
                       onClick={() => setForm({ ...form, banner: '' })}
@@ -243,10 +251,19 @@ export default function MatchManager() {
                 ) : (
                   <div
                     onClick={() => fileInputRef.current?.click()}
-                    className="flex flex-col items-center justify-center w-full h-32 border-2 border-dashed border-gray-700 rounded-lg cursor-pointer hover:border-yellow-500"
+                    className="flex flex-col items-center justify-center w-full h-32 border-2 border-dashed border-gray-700 rounded-lg cursor-pointer hover:border-yellow-500 transition-colors"
                   >
-                    <Upload className="w-6 h-6 text-gray-400" />
-                    <span className="text-gray-400 text-sm">{uploading ? 'Uploading...' : 'Upload Banner'}</span>
+                    {uploading ? (
+                      <>
+                        <div className="w-6 h-6 border-4 border-yellow-500 border-t-transparent rounded-full animate-spin" />
+                        <span className="text-gray-400 text-sm">Uploading...</span>
+                      </>
+                    ) : (
+                      <>
+                        <Upload className="w-6 h-6 text-gray-400" />
+                        <span className="text-gray-400 text-sm">Upload Opponent Banner</span>
+                      </>
+                    )}
                   </div>
                 )}
                 <input
@@ -260,12 +277,26 @@ export default function MatchManager() {
 
               <div>
                 <label className="block text-sm silver-text mb-2">Opponent *</label>
-                <input type="text" value={form.opponent} onChange={(e) => setForm({ ...form, opponent: e.target.value })} className="w-full px-4 py-2 bg-black border border-gray-700 rounded-lg text-white" required />
+                <input 
+                  type="text" 
+                  value={form.opponent} 
+                  onChange={(e) => setForm({ ...form, opponent: e.target.value })} 
+                  className="w-full px-4 py-2 bg-black border border-gray-700 rounded-lg text-white" 
+                  placeholder="e.g., Team Alpha" 
+                  required 
+                />
               </div>
 
               <div>
                 <label className="block text-sm silver-text mb-2">Tournament *</label>
-                <input type="text" value={form.tournament} onChange={(e) => setForm({ ...form, tournament: e.target.value })} className="w-full px-4 py-2 bg-black border border-gray-700 rounded-lg text-white" required />
+                <input 
+                  type="text" 
+                  value={form.tournament} 
+                  onChange={(e) => setForm({ ...form, tournament: e.target.value })} 
+                  className="w-full px-4 py-2 bg-black border border-gray-700 rounded-lg text-white" 
+                  placeholder="e.g., RVC Championship 2026" 
+                  required 
+                />
               </div>
 
               <div className="grid grid-cols-2 gap-4">
@@ -309,6 +340,19 @@ export default function MatchManager() {
                   <option>Draw</option>
                 </select>
               </div>
+
+              {(form.result === 'Win' || form.result === 'Loss') && (
+                <div className="grid grid-cols-2 gap-4">
+                  <div>
+                    <label className="block text-sm silver-text mb-2">RVC Score</label>
+                    <input type="number" value={form.score?.team || 0} onChange={(e) => setForm({ ...form, score: { ...form.score, team: parseInt(e.target.value) || 0 } })} className="w-full px-4 py-2 bg-black border border-gray-700 rounded-lg text-white" />
+                  </div>
+                  <div>
+                    <label className="block text-sm silver-text mb-2">Opponent Score</label>
+                    <input type="number" value={form.score?.opponent || 0} onChange={(e) => setForm({ ...form, score: { ...form.score, opponent: parseInt(e.target.value) || 0 } })} className="w-full px-4 py-2 bg-black border border-gray-700 rounded-lg text-white" />
+                  </div>
+                </div>
+              )}
 
               <div className="flex space-x-4 pt-2">
                 <button type="button" onClick={() => setIsModalOpen(false)} className="flex-1 py-2 bg-gray-700 text-gray-300 rounded-lg">Cancel</button>

@@ -2,7 +2,7 @@ import { motion } from 'framer-motion';
 import { useState, useEffect } from 'react';
 import { db } from '../../lib/firebase';
 import { collection, getDocs } from 'firebase/firestore';
-import { Swords } from 'lucide-react';
+import { Swords, ImagePlus } from 'lucide-react';
 
 export default function MatchesSection() {
   const [matches, setMatches] = useState([]);
@@ -47,6 +47,7 @@ export default function MatchesSection() {
           </div>
         ) : (
           <>
+            {/* Upcoming Matches */}
             {upcomingMatches.length > 0 && (
               <div className="mb-16">
                 <h3 className="text-2xl font-bold silver-text mb-6">Upcoming Matches</h3>
@@ -55,23 +56,53 @@ export default function MatchesSection() {
                     <motion.div
                       key={match.id}
                       whileHover={{ scale: 1.02 }}
-                      className="bg-gray-900 p-6 rounded-xl border border-yellow-500/30"
+                      className="bg-gray-900 p-4 md:p-6 rounded-xl border border-yellow-500/30"
                     >
-                      <div className="flex flex-col md:flex-row items-center justify-between">
-                        <div>
-                          <p className="text-sm text-gray-400">{match.tournament}</p>
-                          <p className="text-lg silver-text">{match.format}</p>
+                      <div className="flex items-center justify-between gap-2 md:gap-4">
+                        {/* RVC Side */}
+                        <div className="flex-1 text-center">
+                          <div className="w-16 h-16 md:w-24 md:h-24 mx-auto mb-2 rounded-full overflow-hidden border-2 border-yellow-500/50">
+                            <img 
+                              src="/images/RVCLOGO.jpg" 
+                              alt="RVC" 
+                              className="w-full h-full object-cover"
+                              onError={(e) => {
+                                e.target.style.display = 'none';
+                              }}
+                            />
+                          </div>
+                          <p className="font-bold gold-text text-sm md:text-lg">RVC</p>
                         </div>
-                        <div className="flex items-center space-x-8 my-4 md:my-0">
-                          <span className="text-xl font-bold gold-text">RVC</span>
-                          <span className="text-2xl text-gray-500">VS</span>
-                          <span className="text-xl font-bold silver-text">{match.opponent}</span>
+
+                        {/* VS + Info */}
+                        <div className="flex flex-col items-center">
+                          <span className="text-xl md:text-3xl font-black text-gray-500">VS</span>
+                          <div className="text-center mt-2">
+                            <p className="text-xs md:text-sm text-gray-400">{match.tournament}</p>
+                            <p className="text-xs text-gray-500">{match.format}</p>
+                            <p className="text-xs text-gray-400 mt-1">
+                              {match.date ? new Date(match.date).toLocaleDateString() : 'TBD'}
+                            </p>
+                            <p className="text-xs text-gray-500">{match.time || 'TBD'}</p>
+                          </div>
                         </div>
-                        <div className="text-right">
-                          <p className="text-gray-300">
-                            {match.date ? new Date(match.date).toLocaleDateString() : 'TBD'}
-                          </p>
-                          <p className="text-gray-400">{match.time || 'TBD'}</p>
+
+                        {/* Opponent Side */}
+                        <div className="flex-1 text-center">
+                          <div className="w-16 h-16 md:w-24 md:h-24 mx-auto mb-2 rounded-full overflow-hidden border-2 border-silver-500/50">
+                            {match.banner ? (
+                              <img 
+                                src={match.banner} 
+                                alt={match.opponent} 
+                                className="w-full h-full object-cover"
+                              />
+                            ) : (
+                              <div className="w-full h-full bg-gradient-to-br from-gray-700 to-gray-900 flex items-center justify-center">
+                                <ImagePlus className="w-6 h-6 text-gray-500" />
+                              </div>
+                            )}
+                          </div>
+                          <p className="font-bold silver-text text-sm md:text-lg">{match.opponent}</p>
                         </div>
                       </div>
                     </motion.div>
@@ -80,30 +111,55 @@ export default function MatchesSection() {
               </div>
             )}
 
+            {/* Completed Matches */}
             {completedMatches.length > 0 && (
               <div>
                 <h3 className="text-2xl font-bold silver-text mb-6">Recent Results</h3>
-                <div className="grid gap-4">
+                <div className="space-y-4">
                   {completedMatches.map((match) => (
                     <motion.div
                       key={match.id}
                       whileHover={{ scale: 1.02 }}
-                      className={`p-4 rounded-lg border ${
+                      className={`p-4 md:p-6 rounded-xl border ${
                         match.result === 'Win' 
-                          ? 'bg-green-900/40 border-green-500/30' 
-                          : 'bg-red-900/40 border-red-500/30'
+                          ? 'bg-green-900/30 border-green-500/30' 
+                          : 'bg-red-900/30 border-red-500/30'
                       }`}
                     >
-                      <div className="flex items-center justify-between">
-                        <span className="silver-text font-semibold">{match.opponent}</span>
-                        <span className={`font-bold ${
-                          match.result === 'Win' ? 'text-green-400' : 'text-red-400'
-                        }`}>
-                          {match.score?.team || 0} - {match.score?.opponent || 0}
-                        </span>
-                        <span className="text-gray-400 text-sm">
-                          {match.date ? new Date(match.date).toLocaleDateString() : ''}
-                        </span>
+                      <div className="flex items-center justify-between gap-2 md:gap-4">
+                        {/* RVC */}
+                        <div className="flex-1 flex items-center gap-2 md:gap-3">
+                          <div className="w-10 h-10 md:w-14 md:h-14 rounded-full overflow-hidden border-2 border-yellow-500/50">
+                            <img src="/images/RVCLOGO.jpg" alt="RVC" className="w-full h-full object-cover" />
+                          </div>
+                          <div>
+                            <p className="font-bold gold-text text-sm md:text-base">RVC</p>
+                            <p className="text-green-400 font-bold text-lg md:text-2xl">{match.score?.team || 0}</p>
+                          </div>
+                        </div>
+
+                        {/* VS */}
+                        <span className="text-gray-500 font-bold text-sm md:text-lg">VS</span>
+
+                        {/* Opponent */}
+                        <div className="flex-1 flex items-center gap-2 md:gap-3 justify-end">
+                          <div className="text-right">
+                            <p className="font-bold silver-text text-sm md:text-base">{match.opponent}</p>
+                            <p className="text-red-400 font-bold text-lg md:text-2xl">{match.score?.opponent || 0}</p>
+                          </div>
+                          <div className="w-10 h-10 md:w-14 md:h-14 rounded-full overflow-hidden border-2 border-silver-500/50">
+                            {match.banner ? (
+                              <img src={match.banner} alt={match.opponent} className="w-full h-full object-cover" />
+                            ) : (
+                              <div className="w-full h-full bg-gray-700 flex items-center justify-center">
+                                <ImagePlus className="w-4 h-4 text-gray-500" />
+                              </div>
+                            )}
+                          </div>
+                        </div>
+                      </div>
+                      <div className="text-center mt-2 text-xs text-gray-400">
+                        {match.date ? new Date(match.date).toLocaleDateString() : ''}
                       </div>
                     </motion.div>
                   ))}
@@ -111,6 +167,7 @@ export default function MatchesSection() {
               </div>
             )}
 
+            {/* No matches */}
             {upcomingMatches.length === 0 && completedMatches.length === 0 && (
               <div className="text-center py-12 text-gray-400">
                 <Swords className="w-16 h-16 mx-auto mb-4 text-gray-600" />
