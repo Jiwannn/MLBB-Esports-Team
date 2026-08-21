@@ -37,7 +37,7 @@ export default function AdminDashboard() {
       />
 
       <div className={`flex-1 transition-all duration-300 ${isSidebarOpen ? 'ml-64' : 'ml-0'}`}>
-        {/* Top Bar */}
+        {/* Top Bar - Just email and hamburger */}
         <div className="bg-gray-900/50 backdrop-blur-lg border-b border-yellow-500/30 px-8 py-4 flex justify-between items-center sticky top-0 z-40">
           <button
             onClick={() => setIsSidebarOpen(!isSidebarOpen)}
@@ -55,16 +55,9 @@ export default function AdminDashboard() {
           </div>
         </div>
 
-        {/* Content Area */}
+        {/* Content Area - NO redundant header */}
         <div className="p-8">
-          <div className="mb-8">
-            <h2 className="admin-title text-3xl gold-text mb-2">
-              {activeTab.charAt(0).toUpperCase() + activeTab.slice(1)}
-            </h2>
-            <p className="text-gray-400 admin-text">Manage your esports organization</p>
-          </div>
-
-          {/* Render Active Tab */}
+          {activeTab === 'overview' && <Overview setActiveTab={setActiveTab} />}
           {activeTab === 'registrations' && <RegistrationsManager />}
           {activeTab === 'contacts' && <ContactsManager />}
           {activeTab === 'teams' && <TeamsManager />}
@@ -72,7 +65,6 @@ export default function AdminDashboard() {
           {activeTab === 'matches' && <MatchManager />}
           {activeTab === 'gallery' && <GalleryManager />}
           {activeTab === 'settings' && <SettingsManager />}
-          {activeTab === 'overview' && <Overview setActiveTab={setActiveTab} />}
         </div>
       </div>
     </div>
