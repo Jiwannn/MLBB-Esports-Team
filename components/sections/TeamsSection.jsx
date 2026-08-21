@@ -8,6 +8,7 @@ export default function TeamsSection() {
   const [teams, setTeams] = useState([]);
   const [players, setPlayers] = useState([]);
   const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
   const [selectedTeam, setSelectedTeam] = useState(null);
   const [teamPlayers, setTeamPlayers] = useState([]);
 
@@ -21,10 +22,18 @@ export default function TeamsSection() {
         getDocs(collection(db, 'teams')),
         getDocs(collection(db, 'players')),
       ]);
-      setTeams(teamsSnap.docs.map(doc => ({ id: doc.id, ...doc.data() })));
-      setPlayers(playersSnap.docs.map(doc => ({ id: doc.id, ...doc.data() })));
+      
+      const teamsData = teamsSnap.docs.map(doc => ({ id: doc.id, ...doc.data() }));
+      const playersData = playersSnap.docs.map(doc => ({ id: doc.id, ...doc.data() }));
+      
+      // Sort by order if exists
+      teamsData.sort((a, b) => (a.order || 0) - (b.order || 0));
+      
+      setTeams(teamsData);
+      setPlayers(playersData);
     } catch (error) {
-      console.error('Error:', error);
+      console.error('Error fetching data:', error);
+      setError(error.message);
     } finally {
       setLoading(false);
     }
@@ -32,7 +41,8 @@ export default function TeamsSection() {
 
   const handleTeamClick = (team) => {
     setSelectedTeam(team);
-    setTeamPlayers(players.filter(p => p.team === team.name));
+    const filtered = players.filter(p => p.team === team.name);
+    setTeamPlayers(filtered || []);
   };
 
   return (
@@ -52,40 +62,45 @@ export default function TeamsSection() {
           <div className="text-center py-12">
             <div className="w-16 h-16 border-4 border-yellow-500/30 border-t-yellow-500 rounded-full animate-spin mx-auto" />
           </div>
+        ) : error ? (
+          <div className="text-center text-red-400 py-12">
+            <p>Error loading teams: {error}</p>
+            <button onClick={fetchData} className="mt-4 px-4 py-2 bg-yellow-500 text-black rounded-lg">
+              Retry
+            </button>
+          </div>
         ) : teams.length === 0 ? (
           <div className="text-center text-gray-400 py-12">
             <Users className="w-16 h-16 mx-auto mb-4 text-gray-600" />
             <p>No teams available yet</p>
           </div>
         ) : (
-          <div className="grid grid-cols-3 md:grid-cols-4 lg:grid-cols-5 xl:grid-cols-6 gap-3 md:gap-4">
+          <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-3 md:gap-6">
             {teams.map((team, index) => (
               <motion.div
                 key={team.id}
                 initial={{ opacity: 0, y: 30 }}
                 whileInView={{ opacity: 1, y: 0 }}
                 viewport={{ amount: 0.3 }}
-                transition={{ delay: index * 0.03 }}
+                transition={{ delay: index * 0.05 }}
+                whileHover={{ scale: 1.03 }}
                 className="team-card bg-gray-900 rounded-lg border border-yellow-500/40 overflow-hidden cursor-pointer"
                 onClick={() => handleTeamClick(team)}
               >
-                {/* Smaller banner - 480x480 displayed small */}
-                <div className="w-full aspect-square max-h-[150px] md:max-h-[180px]">
+                <div className="w-full aspect-square">
                   {team.banner ? (
-                    <img src={team.banner} alt={team.name} className="w-full h-full object-cover object-center" />
+                    <img src={team.banner} alt={team.name || 'Team'} className="w-full h-full object-cover" />
                   ) : (
                     <div className="w-full h-full bg-gradient-to-br from-yellow-500/20 to-gray-700 flex items-center justify-center">
-                      <Users className="w-6 h-6 text-gray-500" />
+                      <Users className="w-8 h-8 text-gray-500" />
                     </div>
                   )}
                 </div>
-                
-                {/* Compact info */}
-                <div className="p-2 md:p-3">
-                  <h3 className="text-xs md:text-sm font-bold gold-text truncate">{team.name}</h3>
-                  <p className="text-gray-400 text-[10px] md:text-xs truncate">{team.division}</p>
-                  <div className="flex justify-between text-[9px] md:text-[10px] text-gray-400 mt-1">
-                    <span>{team.players || 0}P</span>
+                <div className="p-3 text-center">
+                  <h3 className="text-sm font-bold gold-text truncate">{team.name || 'Unnamed Team'}</h3>
+                  <p className="text-gray-400 text-xs truncate">{team.division || ''}</p>
+                  <div className="flex justify-between text-[10px] text-gray-400 mt-1">
+                    <span>{team.players || 0} Players</span>
                     <span>{team.wins || 0}W - {team.losses || 0}L</span>
                   </div>
                 </div>
@@ -111,8 +126,8 @@ export default function TeamsSection() {
           >
             <div className="flex justify-between items-center mb-6">
               <div>
-                <h3 className="text-2xl md:text-3xl font-bold gold-text">{selectedTeam.name}</h3>
-                <p className="text-gray-400">{selectedTeam.division}</p>
+                <h3 className="text-2xl md:text-3xl font-bold gold-text">{selectedTeam.name || 'Team'}</h3>
+                <p className="text-gray-400">{selectedTeam.division || ''}</p>
               </div>
               <button onClick={() => setSelectedTeam(null)}>
                 <X className="w-6 h-6 text-gray-400" />
@@ -137,9 +152,9 @@ export default function TeamsSection() {
                         </div>
                       )}
                     </div>
-                    <div className="p-3">
-                      <p className="font-bold gold-text text-sm">{player.name}</p>
-                      <p className="text-gray-400 text-xs">{player.role}</p>
+                    <div className="p-3 text-center">
+                      <p className="font-bold gold-text text-sm">{player.name || 'Unknown'}</p>
+                      <p className="text-gray-400 text-xs">{player.role || ''}</p>
                     </div>
                   </div>
                 ))}
