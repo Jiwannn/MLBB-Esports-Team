@@ -18,7 +18,7 @@ export default function AdminDashboard() {
   const router = useRouter();
   const [adminEmail, setAdminEmail] = useState('');
   const [activeTab, setActiveTab] = useState('overview');
-  const [isSidebarOpen, setIsSidebarOpen] = useState(false);
+  const [isSidebarOpen, setIsSidebarOpen] = useState(true);
 
   useEffect(() => {
     const token = localStorage.getItem('adminToken');
@@ -28,6 +28,11 @@ export default function AdminDashboard() {
       router.push('/admin/login');
     } else {
       setAdminEmail(email || 'Admin');
+    }
+
+    // Close sidebar by default on mobile
+    if (window.innerWidth < 768) {
+      setIsSidebarOpen(false);
     }
   }, []);
 
@@ -42,15 +47,15 @@ export default function AdminDashboard() {
 
       <div className={`flex-1 transition-all duration-300 ${isSidebarOpen ? 'md:ml-64 ml-0' : 'ml-0'}`}>
         {/* Top Bar */}
-        <div className="bg-gray-900/50 backdrop-blur-lg border-b border-yellow-500/30 px-4 md:px-8 py-4 flex justify-between items-center sticky top-0 z-40">
+        <div className="bg-gray-900/50 backdrop-blur-lg border-b border-yellow-500/30 px-4 md:px-8 py-3 md:py-4 flex justify-between items-center sticky top-0 z-40">
           <button 
             onClick={() => setIsSidebarOpen(!isSidebarOpen)} 
-            className="text-gray-400 hover:text-yellow-500 text-2xl"
+            className="text-gray-400 hover:text-yellow-500 text-xl md:text-2xl"
           >
             ☰
           </button>
           <div className="flex items-center space-x-2 md:space-x-4">
-            <span className="text-gray-300 text-xs md:text-sm truncate max-w-[100px] md:max-w-none admin-text">{adminEmail}</span>
+            <span className="text-gray-300 text-xs md:text-sm truncate max-w-[120px] md:max-w-none admin-text">{adminEmail}</span>
             <div className="w-8 h-8 md:w-10 md:h-10 rounded-full bg-gradient-to-br from-yellow-500 to-yellow-300 flex items-center justify-center flex-shrink-0">
               <span className="text-black font-bold text-sm md:text-base">
                 {adminEmail?.charAt(0)?.toUpperCase() || 'A'}
@@ -59,7 +64,7 @@ export default function AdminDashboard() {
           </div>
         </div>
 
-        {/* Content Area - Mobile padding */}
+        {/* Content Area */}
         <div className="p-4 md:p-8">
           {activeTab === 'overview' && <Overview setActiveTab={setActiveTab} />}
           {activeTab === 'registrations' && <RegistrationsManager />}
