@@ -24,7 +24,6 @@ export default function AnnouncementsSection() {
     }
   };
 
-  // DON'T SHOW if no announcements
   if (loading) return null;
   if (announcements.length === 0) return null;
 
@@ -48,16 +47,26 @@ export default function AnnouncementsSection() {
               whileInView={{ opacity: 1, y: 0 }}
               viewport={{ amount: 0.3 }}
               transition={{ delay: index * 0.1 }}
-              className="bg-gray-900 p-6 rounded-xl border border-yellow-500/30"
+              className="bg-gray-900 rounded-xl border border-yellow-500/30 overflow-hidden"
             >
-              <div className="flex items-center space-x-2 mb-3">
-                <Megaphone className="w-5 h-5 text-yellow-500" />
-                <span className="text-xs text-gray-400">
-                  {announcement.createdAt ? new Date(announcement.createdAt).toLocaleDateString() : ''}
-                </span>
+              {/* Image */}
+              {announcement.image && (
+                <div className="relative w-full h-40">
+                  <img src={announcement.image} alt={announcement.title} className="w-full h-full object-cover" />
+                  <div className="absolute inset-0 bg-gradient-to-t from-gray-900 to-transparent" />
+                </div>
+              )}
+              
+              <div className="p-5">
+                <div className="flex items-center space-x-2 mb-3">
+                  <Megaphone className="w-4 h-4 text-yellow-500" />
+                  <span className="text-xs text-gray-400">
+                    {announcement.createdAt ? new Date(announcement.createdAt).toLocaleDateString() : ''}
+                  </span>
+                </div>
+                <h3 className="text-lg font-bold gold-text mb-2">{announcement.title}</h3>
+                <p className="text-gray-400 text-sm">{announcement.content}</p>
               </div>
-              <h3 className="text-lg font-bold gold-text mb-2">{announcement.title}</h3>
-              <p className="text-gray-400 text-sm">{announcement.content}</p>
             </motion.div>
           ))}
         </div>
